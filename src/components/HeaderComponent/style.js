@@ -21,3 +21,15 @@ export const WrapperHeaderButton = styled.div`
         color: #00b96b;
     }
 `
+export const WrapperPopupContent = styled.div`
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    padding: 15px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    &:hover{
+        color: #00A651;
+        background-color: #F5F5F5;
+    }
+`

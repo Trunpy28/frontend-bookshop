@@ -14,7 +14,7 @@ const CardComponent = () => {
       cover={
         <img
           alt="example"
-          src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
+          src="https://k3bxzjut8xobj.vcdn.cloud/Book/thumb-fa1521be-4c3b-42e0-bec3-bdc10ea5f58f.jpg"
         />
       }
     >

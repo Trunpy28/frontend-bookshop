@@ -89,7 +89,7 @@ const HeaderNavBar = () => {
               </Space>
             </LinkNavBar>
           </Dropdown>
-          <LinkNavBar onClick={(e) => e.preventDefault()}>
+          <LinkNavBar to={'/'}>
             <Space>TRANG CHỦ</Space>
           </LinkNavBar>
           <LinkNavBar onClick={(e) => e.preventDefault()}>

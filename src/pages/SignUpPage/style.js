@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const WrapperButtonSignIn = styled.button`
+export const WrapperButtonSignUp = styled.button`
   padding: 15px 50px;
   font-size: 18px;
   font-weight: bold;

@@ -96,7 +96,7 @@ const ProductDetailsComponent = () => {
         </Row>
       </Col>
       <Col span={14} style={{ padding: "10px 5vw" }}>
-        <WrapperStyleNameProduct>Giáo trình Python</WrapperStyleNameProduct>
+        <WrapperStyleNameProduct>Design Patterns For Vuejs A Test Driven Approach To Maintainable Applications - Lachlan Miller</WrapperStyleNameProduct>
         <div
           style={{
             display: "flex",
