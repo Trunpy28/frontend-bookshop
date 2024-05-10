@@ -22,7 +22,7 @@ const SignInPage = () => {
 
   const navigate = useNavigate();
 
-  const mutation = useMutationHooks((data) => UserService.loginUser(data));
+  const mutation = useMutationHooks(async (data) => await UserService.loginUser(data));
 
   const { data, isPending, isSuccess, isError } = mutation;
 

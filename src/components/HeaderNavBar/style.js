@@ -16,5 +16,6 @@ export const LinkNavBar = styled(Link)`
     color: white;
     &:hover{
         background-color: #0C6136;
+        color: white;
     }
 `

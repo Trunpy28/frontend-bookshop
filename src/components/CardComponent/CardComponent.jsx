@@ -4,7 +4,8 @@ import {StarFilled} from '@ant-design/icons';
 import { StyledNameProduct, WrapperOriginalPriceText, WrapperPriceText, WrapperReportText } from "./style";
 
 
-const CardComponent = () => {
+const CardComponent = (props) => {
+  const { image, name, price, rating, discount, selled} = props;
   return (
     <Card
       hoverable
@@ -18,15 +19,15 @@ const CardComponent = () => {
         />
       }
     >
-        <StyledNameProduct>Giáo trình Python</StyledNameProduct>
+        <StyledNameProduct>{name}</StyledNameProduct>
         <WrapperReportText>
             <span>
-                <span>4.8 <StarFilled style={{fontSize: '14px',color:'#FFC70D'}}/> </span>
+                <span>{rating} <StarFilled style={{fontSize: '14px',color:'#FFC70D'}}/> </span>
             </span>
-            <span>| Đã bán 1000+</span>
+            <span>| Đã bán {selled || 0}</span>
         </WrapperReportText>
         <WrapperPriceText>
-            128.000 đ   <WrapperOriginalPriceText>135.000 đ</WrapperOriginalPriceText>
+            {discount} đ  {(discount < price) && <WrapperOriginalPriceText>{price} đ</WrapperOriginalPriceText>}
         </WrapperPriceText>
     </Card>
   );
