@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Form, Modal } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Space } from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
 import { WrapperUploadFile } from "../../pages/ProfilePage/style";
@@ -22,6 +27,11 @@ const AdminProduct = () => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
+
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+
   const [stateProduct, setStateProduct] = useState({
     name: "",
     image: "",
@@ -87,6 +97,12 @@ const AdminProduct = () => {
     return res;
   });
 
+  const mutationDeletedMany = useMutationHooks(async (data) => {
+    const { token, ...ids} = data;
+    const res = await ProductService.deleteManyProduct(ids, token);
+    return res;
+  });
+
   const getAllProducts = async () => {
     const res = await ProductService.getAllProduct();
     return res;
@@ -115,11 +131,11 @@ const AdminProduct = () => {
   }, [formDetails, stateProductDetails]);
 
   useEffect(() => {
-    if (rowSelected && (isOpenDrawer || isModalOpenDelete)) {
+    if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true);
       fetchGetDetailsProduct(rowSelected);
     }
-  }, [isOpenDrawer, isModalOpenDelete]);
+  }, [isOpenDrawer]);
 
   const handleDetailsProduct = () => {
     setIsOpenDrawer(true);
@@ -144,23 +160,157 @@ const AdminProduct = () => {
       </div>
     );
   };
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText('');
+  };
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+            fontSize: "16px",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+              height: "30px",
+              fontSize: "16px",
+            }}
+          >
+            Tìm
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+              height: "30px",
+              fontSize: "16px",
+            }}
+          >
+            Đặt lại
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+            style={{
+              height: "30px",
+              fontSize: "16px",
+            }}
+          >
+            Đóng
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+  });
+
   const columns = [
     {
       title: "Tên sản phẩm",
       dataIndex: "name",
       render: (text) => <a>{text}</a>,
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      ...getColumnSearchProps("name"),
     },
     {
       title: "Giá",
       dataIndex: "price",
+      sorter: (a, b) => a.price - b.price,
+      filters: [
+        {
+          text: ">= 100.000 đ",
+          value: ">",
+        },
+        {
+          text: "<= 100.000 đ",
+          value: "<=",
+        },
+      ],
+      onFilter: (value, record) => {
+        if (value === ">") return record.price > 100000;
+        else if (value === "<=") return record.price <= 100000;
+      },
     },
     {
       title: "Giá kuyến mãi",
       dataIndex: "discount",
+      sorter: (a, b) => a.discount - b.discount,
+      filters: [
+        {
+          text: ">= 100.000 đ",
+          value: ">",
+        },
+        {
+          text: "<= 100.000 đ",
+          value: "<=",
+        },
+      ],
+      onFilter: (value, record) => {
+        if (value === ">") return record.discount > 100000;
+        else if (value === "<=") return record.discount <= 100000;
+      },
     },
     {
       title: "Loại",
       dataIndex: "type",
+      sorter: (a, b) => a.type.localeCompare(b.type),
+    },
+    {
+      title: "Tác giả",
+      dataIndex: "author",
+      sorter: (a, b) => a.type.localeCompare(b.type),
     },
     {
       title: "Thao tác",
@@ -178,6 +328,8 @@ const AdminProduct = () => {
       };
     });
 
+
+
   const { data, isPending, isSuccess, isError } = mutation;
   const {
     data: dataUpdated,
@@ -192,6 +344,13 @@ const AdminProduct = () => {
     isSuccess: isSuccessDeleted,
     isError: isErrorDeleted,
   } = mutationDeleted;
+
+  const {
+    data: dataDeletedMany,
+    isPending: isLoadingDeletedMany,
+    isSuccess: isSuccessDeletedMany,
+    isError: isErrorDeletedMany,
+  } = mutationDeletedMany;
 
   useEffect(() => {
     if (isSuccess && data?.status === "OK") {
@@ -210,6 +369,14 @@ const AdminProduct = () => {
       message.error("Xóa sản phẩm thất bại");
     }
   }, [isSuccessDeleted, isErrorDeleted]);
+
+  useEffect(() => {
+    if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
+      message.success("Xóa các sản phẩm thành công");
+    } else if (isErrorDeletedMany || dataDeletedMany?.status === "ERR") {
+      message.error("Xóa các sản phẩm thất bại");
+    }
+  }, [isSuccessDeletedMany, isErrorDeletedMany]);
 
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === "OK") {
@@ -284,6 +451,17 @@ const AdminProduct = () => {
       }
     );
   };
+
+  const handleDeleteManyProducts = (ids) => {
+    mutationDeletedMany.mutate(
+      { ids: ids, token: user?.access_token },
+      {
+        onSettled: () => {
+          queryProduct.refetch();
+        },
+      }
+    );
+  }
 
   const handleCancel = () => {
     setStateProduct({
@@ -380,6 +558,7 @@ const AdminProduct = () => {
       </div>
       <div style={{ marginTop: "20px" }}>
         <TableComponent
+          handleDeleteMany={handleDeleteManyProducts}
           columns={columns}
           data={dataTable}
           isLoading={isLoadingProducts}
@@ -393,6 +572,7 @@ const AdminProduct = () => {
         />
       </div>
       <ModalComponent
+        forceRender
         title="Tạo sản phẩm"
         open={isModalOpen}
         onOk={handleOk}
@@ -403,7 +583,7 @@ const AdminProduct = () => {
       >
         <Loading isLoading={isPending}>
           <Form
-            name="basic"
+            name="Add product form"
             labelCol={{
               span: 8,
             }}
@@ -607,10 +787,11 @@ const AdminProduct = () => {
           setIsOpenDrawer(false);
         }}
         width="65%"
+        forceRender
       >
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
           <Form
-            name="basic"
+            name="Edit product form"
             labelCol={{
               span: 8,
             }}

@@ -19,7 +19,7 @@ export const RatingText = styled.div`
   font-family: Inter, Helvetica, Arial, sans-serif;
 `;
 export const WrapperPrice = styled.div`
-  margin-top: 30px;
+  margin-top: 25px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -81,4 +81,12 @@ export const WrapperButtonAddToCart = styled.button`
     background-color: #00a651;
     color: white;
   }
+`
+
+export const WrapperAuthor = styled.div`
+  font-size: 18px;
+  color: black;
+  font-weight: 400;
+  vertical-align: middle;
+  margin-top: 15px;
 `

@@ -18,7 +18,7 @@ function App() {
   //Lấy thông tin user
   const handleGetDetailsUser = async (id, token) => {
     try{
-        const res = await UserService.getDetaislUser(id, token);
+        const res = await UserService.getDetailsUser(id, token);
         dispatch(updateUser({ ...res?.data, access_token: token }));
     }catch(e){
       console.log(e);
@@ -56,6 +56,7 @@ function App() {
 
       if (decoded?.exp < currentTime.getTime() / 1000) {
         const data = await UserService.refreshToken();
+        localStorage.setItem('access_token', JSON.stringify(data?.access_token));
         config.headers["token"] = `Bearer ${data?.access_token}`;
       }
       return config;

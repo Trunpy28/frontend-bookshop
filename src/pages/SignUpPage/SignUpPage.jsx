@@ -86,6 +86,7 @@ const SignUpPage = () => {
                   style={{ fontSize: "16px", minWidth: "300px" }}
                   value={email}
                   onChange={handleOnChangeEmail}
+                  onPressEnter={handleSignUp}
                 />
               </Form.Item>
             </WrapperInputField>
@@ -105,6 +106,7 @@ const SignUpPage = () => {
                   value={password}
                   style={{ fontSize: "16px", minWidth: "300px" }}
                   onChange={handleOnChangePassword}
+                  onPressEnter={handleSignUp}
                 />
               </Form.Item>
             </WrapperInputField>
@@ -124,6 +126,7 @@ const SignUpPage = () => {
                   value={confirmPassword}
                   style={{ fontSize: "16px", minWidth: "300px" }}
                   onChange={handleOnChangeConfirmPassword}
+                  onPressEnter={handleSignUp}
                 />
               </Form.Item>
             </WrapperInputField>

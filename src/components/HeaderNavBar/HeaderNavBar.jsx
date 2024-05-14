@@ -7,48 +7,63 @@ const productTypes = [
   {
     key: "1",
     label: "Sách Kinh Tế",
+    onClick: (e) => {
+      console.log(123);
+    },
   },
   {
     key: "2",
     label: "Sách Văn Học Trong Nước",
+    onClick: (e) => {
+      console.log(123);
+    },
   },
   {
     key: "3",
     label: "Sách Văn Học Nước Ngoài",
-    onclick: (e) => {
+    onClick: (e) => {
       console.log(123);
     },
   },
   {
     key: "4",
     label: "Sách Thưởng Thức Đời Sống",
+    onClick: (e) => {
+      console.log(123);
+    },
   },
   {
     key: "5",
     label: "Sách Thiếu Nhi",
-    onclick: (e) => {
+    onClick: (e) => {
       console.log(123);
     },
   },
   {
     key: "6",
     label: "Sách Phát Triển Bản Thân",
+    onClick: (e) => {
+      console.log(123);
+    },
   },
   {
     key: "7",
     label: "Sách Tin Học Ngoại Ngữ",
-    onclick: (e) => {
+    onClick: (e) => {
       console.log(123);
     },
   },
   {
     key: "8",
     label: "Sách Chuyên Ngành",
+    onClick: (e) => {
+      console.log(123);
+    },
   },
   {
     key: "9",
     label: "Sách Giáo Khoa - Giáo Trình",
-    onclick: (e) => {
+    onClick: (e) => {
       console.log(123);
     },
   },
@@ -77,8 +92,8 @@ const HeaderNavBar = () => {
         >
           <Dropdown
             menu={{
-              onClick: handleDropdownItemClick,
               items: productTypes,
+              // onClick: handleDropdownItemClick,
             }}
           >
             <LinkNavBar onClick={(e) => e.preventDefault()}>

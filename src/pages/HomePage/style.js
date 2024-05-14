@@ -1,13 +1,21 @@
 import styled from "styled-components";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 
-export const WrapperButtonMore = styled(ButtonComponent)`
+export const WrapperButtonMore = styled.button`
+    color: green;
+    border: 2px solid green;
     &:hover{
         background-color: green;
         border: none;
-        span {
-            color: white;
-        }
+        color: white;
+        cursor: pointer;
+    }
+
+    &:disabled{
+        background-color: #919198;
+        border: 1px solid #919198;
+        cursor: not-allowed;
+        color: white;
     }
 ` 
 

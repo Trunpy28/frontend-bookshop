@@ -14,12 +14,14 @@ import {
   InfoCircleOutlined,
   UserAddOutlined,
   SettingOutlined,
+  SearchOutlined
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as UserService from "../../services/UserService";
 import { resetUser } from "../../redux/slices/userSlice";
 import Loading from "../LoadingComponent/Loading";
+import { searchProduct } from "../../redux/slices/productSlice";
 const { Search } = Input;
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
@@ -29,6 +31,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
+  const [search,setSearch] = useState('')
   const handleNavigateLogin = () => {
     navigate("/sign-in");
   };
@@ -36,6 +39,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const handleLogout = async () => {
     setLoading(true);
     await UserService.logoutUser();
+    localStorage.removeItem('access_token');
     dispatch(resetUser());
     setLoading(false);
     navigate("/");
@@ -75,6 +79,12 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     </div>
   );
 
+  const onSearch = (e) => {
+    setSearch(e.target.value)
+    dispatch(searchProduct(e.target.value));
+
+  }
+
   return (
     <div>
       <WrapperHeader>
@@ -84,7 +94,9 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             alt=""
             style={{
               width: "5vw",
+              cursor: "pointer"
             }}
+            onClick={() => navigate("/")}
           />
         </Col>
         <Col span={12}>
@@ -99,11 +111,9 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             >
               <Search
                 placeholder="Tìm kiếm theo từ khóa trong tên sách..."
-                enterButton="Tìm kiếm"
+                enterButton={(<div style={{fontSize: '16px'}}><SearchOutlined /> Tìm kiếm</div>)}
                 size="large"
-                onSearch={(value, e, { source = "input" }) => {
-                  console.log(123);
-                }}
+                onChange={onSearch}
               />
             </ConfigProvider>
           )}

@@ -65,7 +65,7 @@ const AdminPage = () => {
             style={{
               width: 256,
               boxShadow: '1px 1px 2px #ccc',
-              height: '100vw'
+              height: '150vh'
             }}
             defaultSelectedKeys={["user"]}
             mode="inline"

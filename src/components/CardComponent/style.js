@@ -4,6 +4,7 @@ export const StyledNameProduct = styled.div`
     font-weight: 500;
     font-size: 20px;
     color: #4B4848;
+    cursor: pointer;
 `
 
 export const WrapperReportText = styled.div`

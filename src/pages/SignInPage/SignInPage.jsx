@@ -43,7 +43,7 @@ const SignInPage = () => {
   }, [isSuccess, isError]);
 
   const handleGetDetailsUser = async (id,token) => {
-    const res = await UserService.getDetaislUser(id, token);
+    const res = await UserService.getDetailsUser(id, token);
     dispatch(updateUser({...res?.data, access_token: token}));
     console.log(res);
   }
@@ -94,6 +94,7 @@ const SignInPage = () => {
                   style={{ fontSize: "16px", minWidth: "300px" }}
                   value={email}
                   onChange={handleOnChangeEmail}
+                  onPressEnter={handleSignIn}
                 />
               </Form.Item>
             </WrapperInputField>
@@ -114,6 +115,7 @@ const SignInPage = () => {
                   value={password}
                   style={{ fontSize: "16px", minWidth: "300px" }}
                   onChange={handleOnChangePassword}
+                  onPressEnter={handleSignIn}
                 />
               </Form.Item>
             </WrapperInputField>

@@ -29,14 +29,14 @@ const ProfilePage = () => {
 
   const mutation = useMutationHooks(async (data) => {
     const { id, access_token, ...rest } = data;
-    await UserService.updateUser(id, rest, access_token);
+    await UserService.updateUser(id, access_token, rest );
   });
 
   const dispatch = useDispatch();
   const { data, isPending, isSuccess, isError } = mutation;
 
   const handleGetDetailsUser = async (id, token) => {
-    const res = await UserService.getDetaislUser(id, token);
+    const res = await UserService.getDetailsUser(id, token);
     dispatch(updateUser({ ...res?.data, access_token: token }));
   };
 
