@@ -1,79 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DownOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { Dropdown, ConfigProvider, Space } from "antd";
 import { LinkNavBar, TypeProductWrapper } from "./style";
+import { useNavigate } from "react-router-dom";
+import * as ProductService from "../../services/ProductService";
 
-const productTypes = [
-  {
-    key: "1",
-    label: "Sách Kinh Tế",
-    onClick: (e) => {
-      console.log(123);
-    },
-  },
-  {
-    key: "2",
-    label: "Sách Văn Học Trong Nước",
-    onClick: (e) => {
-      console.log(123);
-    },
-  },
-  {
-    key: "3",
-    label: "Sách Văn Học Nước Ngoài",
-    onClick: (e) => {
-      console.log(123);
-    },
-  },
-  {
-    key: "4",
-    label: "Sách Thưởng Thức Đời Sống",
-    onClick: (e) => {
-      console.log(123);
-    },
-  },
-  {
-    key: "5",
-    label: "Sách Thiếu Nhi",
-    onClick: (e) => {
-      console.log(123);
-    },
-  },
-  {
-    key: "6",
-    label: "Sách Phát Triển Bản Thân",
-    onClick: (e) => {
-      console.log(123);
-    },
-  },
-  {
-    key: "7",
-    label: "Sách Tin Học Ngoại Ngữ",
-    onClick: (e) => {
-      console.log(123);
-    },
-  },
-  {
-    key: "8",
-    label: "Sách Chuyên Ngành",
-    onClick: (e) => {
-      console.log(123);
-    },
-  },
-  {
-    key: "9",
-    label: "Sách Giáo Khoa - Giáo Trình",
-    onClick: (e) => {
-      console.log(123);
-    },
-  },
-];
-
-const handleDropdownItemClick = (e) => {
-  console.log(e.key);
-};
 
 const HeaderNavBar = () => {
+  const navigate = useNavigate();
+  const [typeProducts, setTypeProducts] = useState([])
+  const fetchAllTypeProduct = async () => {
+    const  res = await ProductService.getAllTypeProduct();
+    if(res?.status === 'OK') {
+      setTypeProducts(res?.data);
+    }
+  }
+  useEffect(() => {
+    fetchAllTypeProduct();
+  },[])
+
+  const productTypes = typeProducts.map((value) => {
+    return {
+      key: value,
+      label: value,
+      onClick: (e) => {
+        navigate(`/product/${value.normalize('NFD').replace(/[\u0300-\u036f]/g, '')?.replace(/ /g, '_')}`,{state: value});
+      },
+    }
+  })
+  
   return (
     <div>
       <TypeProductWrapper>

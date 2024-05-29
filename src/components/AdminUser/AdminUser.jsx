@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Form, Input, Space } from "antd";
+import { Button, Form, Input, Select, Space } from "antd";
 import {
   PlusOutlined,
   EditOutlined,
@@ -57,7 +57,16 @@ const AdminUser = () => {
   const [formDetails] = Form.useForm();
 
   const mutation = useMutationHooks(async (data) => {
-    const { name, email, password,confirmPassword,isAdmin, phone,address,avatar } = data;
+    const {
+      name,
+      email,
+      password,
+      confirmPassword,
+      isAdmin,
+      phone,
+      address,
+      avatar,
+    } = data;
     const res = await UserService.signUpUser({
       name,
       email,
@@ -84,7 +93,7 @@ const AdminUser = () => {
   });
 
   const mutationDeletedMany = useMutationHooks(async (data) => {
-    const { token, ...ids} = data;
+    const { token, ...ids } = data;
     const res = await UserService.deleteManyUser(ids, token);
     return res;
   });
@@ -302,7 +311,7 @@ const AdminUser = () => {
         isAdmin: user.isAdmin ? "Quản trị viên" : "Khách hàng",
       };
     });
-    
+
   const { data, isPending, isSuccess, isError } = mutation;
   const {
     data: dataUpdated,
@@ -330,7 +339,7 @@ const AdminUser = () => {
       message.success("Thêm tài khoản thành công");
       handleCancelDelete();
     } else if (isError || data?.status === "ERR") {
-      message.error("Thêm tài khoản thất bại. "+data?.message);
+      message.error("Thêm tài khoản thất bại. " + data?.message);
     }
   }, [isSuccess, isError]);
 
@@ -429,7 +438,7 @@ const AdminUser = () => {
         },
       }
     );
-  }
+  };
 
   const handleCancel = () => {
     setStateUser({
@@ -465,10 +474,24 @@ const AdminUser = () => {
     });
   };
 
+  const handleOnChangeRole = (value) => {
+    setStateUser({
+      ...stateUser,
+      isAdmin: value,
+    });
+  };
+
   const handleOnChangeDetails = (e) => {
     setStateUserDetails({
       ...stateUserDetails,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleOnChangeDetailsRole = (value) => {
+    setStateUserDetails({
+      ...stateUserDetails,
+      isAdmin: value,
     });
   };
 
@@ -620,7 +643,7 @@ const AdminUser = () => {
             </Form.Item>
 
             <Form.Item
-              label="Mật khẩu"
+              label="Mật khẩu xác nhận"
               name="confirmPassword"
               rules={[
                 {
@@ -676,16 +699,45 @@ const AdminUser = () => {
               rules={[
                 {
                   required: true,
+                  message: "Hãy chọn vai trò của tài khoản!",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Chọn vai trò"
+                style={{
+                  width: 150,
+                }}
+                onChange={handleOnChangeRole}
+                options={[
+                  {
+                    value: true,
+                    label: "Quản trị viên",
+                  },
+                  {
+                    value: false,
+                    label: "Khách hàng",
+                  }
+                ]}
+              />
+            </Form.Item>
+
+            {/* <Form.Item
+              label="Vai trò"
+              name="isAdmin"
+              rules={[
+                {
+                  required: true,
                   message: "Hãy chọn vai trò của người dùng!",
                 },
               ]}
             >
               <InputComponent
-                values={stateUser.price}
+                values={stateUser.isAdmin}
                 onChange={handleOnChange}
                 name="isAdmin"
               />
-            </Form.Item>
+            </Form.Item> */}
 
             <Form.Item
               label="Ảnh đại diện"
@@ -733,7 +785,7 @@ const AdminUser = () => {
         </Loading>
       </ModalComponent>
       <DrawerComponent
-        title="Chi tiết người dùng"
+        title="Chi tiết tài khoản"
         isOpen={isOpenDrawer}
         onClose={() => {
           setIsOpenDrawer(false);
@@ -771,7 +823,7 @@ const AdminUser = () => {
               ]}
             >
               <InputComponent
-                values={stateUserDetails.name}
+                values={stateUserDetails?.name}
                 onChange={handleOnChangeDetails}
                 name="name"
               />
@@ -788,7 +840,7 @@ const AdminUser = () => {
               ]}
             >
               <InputComponent
-                values={stateUserDetails.email}
+                values={stateUserDetails?.email}
                 onChange={handleOnChangeDetails}
                 name="email"
               />
@@ -805,7 +857,7 @@ const AdminUser = () => {
               ]}
             >
               <InputComponent
-                values={stateUserDetails.phone}
+                values={stateUserDetails?.phone}
                 onChange={handleOnChangeDetails}
                 name="phone"
               />
@@ -822,13 +874,42 @@ const AdminUser = () => {
               ]}
             >
               <InputComponent
-                values={stateUserDetails.address}
+                values={stateUserDetails?.address}
                 onChange={handleOnChangeDetails}
                 name="address"
               />
             </Form.Item>
 
             <Form.Item
+              label="Vai trò"
+              name="isAdmin"
+              rules={[
+                {
+                  required: true,
+                  message: "Hãy chọn vai trò của tài khoản!",
+                },
+              ]}
+            >
+              <Select
+                defaultValue={stateUserDetails?.isAdmin}
+                style={{
+                  width: 150,
+                }}
+                onChange={handleOnChangeDetailsRole}
+                options={[
+                  {
+                    value: true,
+                    label: "Quản trị viên",
+                  },
+                  {
+                    value: false,
+                    label: "Khách hàng",
+                  }
+                ]}
+              />
+            </Form.Item>
+
+            {/* <Form.Item
               label="Vai trò"
               name="isAdmin"
               rules={[
@@ -843,7 +924,7 @@ const AdminUser = () => {
                 onChange={handleOnChangeDetails}
                 name="isAdmin"
               />
-            </Form.Item>
+            </Form.Item> */}
 
             <Form.Item
               label="Ảnh đại diện"
@@ -861,9 +942,9 @@ const AdminUser = () => {
                 maxCount={1}
               >
                 <Button>Chọn ảnh</Button>
-                {stateUserDetails.avatar && (
+                {stateUserDetails?.avatar && (
                   <img
-                    src={stateUserDetails.avatar}
+                    src={stateUserDetails?.avatar}
                     style={{
                       height: "100px",
                       width: "100px",

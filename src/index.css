@@ -11,3 +11,7 @@
 html{
     font-size: 10px;
 }
+
+.ant-input-number-input{
+    text-align: center !important;
+}

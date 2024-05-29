@@ -5,7 +5,7 @@ import {
   WrapperSignInUpPage,
 } from "../../components/SignInUpComponent/style";
 import { Form, Input } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { WrapperButtonSignIn } from "./style";
 import * as UserService from "../../services/UserService";
 import { useMutationHooks } from "../../hooks/useMutationHook";
@@ -16,6 +16,7 @@ import {useDispatch} from 'react-redux';
 import { updateUser } from "../../redux/slices/userSlice";
 
 const SignInPage = () => {
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
@@ -30,12 +31,17 @@ const SignInPage = () => {
     if (isSuccess && data?.status === "OK") {
       message.success("Đăng nhập thành công");
       localStorage.setItem('access_token', JSON.stringify(data?.access_token));
-      navigate("/");
+      
       if(data?.access_token) {
         const decoded = jwtDecode(data?.access_token);
         if(decoded?.id){
           handleGetDetailsUser(decoded.id, data?.access_token);
         }
+      }
+      if(location?.state){
+        navigate(location?.state);
+      }else {
+        navigate("/");
       }
     } else if (isError || data?.status === "ERR") {
       message.error("Đăng nhập thất bại");
@@ -45,7 +51,6 @@ const SignInPage = () => {
   const handleGetDetailsUser = async (id,token) => {
     const res = await UserService.getDetailsUser(id, token);
     dispatch(updateUser({...res?.data, access_token: token}));
-    console.log(res);
   }
 
   const handleOnChangeEmail = (e) => {

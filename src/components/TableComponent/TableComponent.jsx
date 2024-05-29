@@ -51,9 +51,9 @@ const TableComponent = (props) => {
     <Loading isLoading={isLoading}>
       <Button
         onClick={exportExcel}
-        style={{ fontSize: "18px", marginBottom: "20px", height: "40px"}}
+        style={{ fontSize: "16px", marginBottom: "20px", height: "40px"}}
       >
-        <FileExcelOutlined /> Xuất Excel
+        <FileExcelOutlined style={{fontSize: "18px"}}/> Xuất Excel
       </Button>
       {rowSelectedKeys.length > 0 && (
         <div

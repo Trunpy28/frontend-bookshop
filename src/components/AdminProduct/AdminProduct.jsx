@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Form, Input, Space } from "antd";
+import { Button, Divider, Form, Input, Select, Space } from "antd";
 import {
   PlusOutlined,
   EditOutlined,
@@ -10,7 +10,7 @@ import {
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
 import { WrapperUploadFile } from "../../pages/ProfilePage/style";
-import { getBase64 } from "../../utils";
+import { getBase64, renderOptions } from "../../utils";
 import * as ProductService from "../../services/ProductService";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../LoadingComponent/Loading";
@@ -26,6 +26,10 @@ const AdminProduct = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
+  const [typeSelectModify, setTypeSelectModify] = useState("");
+  const [typeSelectAdd, setTypeSelectAdd] = useState("");
+  const [typeItems, setTypeItems] = useState([]);
+
   const user = useSelector((state) => state?.user);
 
   const [searchText, setSearchText] = useState("");
@@ -98,13 +102,18 @@ const AdminProduct = () => {
   });
 
   const mutationDeletedMany = useMutationHooks(async (data) => {
-    const { token, ...ids} = data;
+    const { token, ...ids } = data;
     const res = await ProductService.deleteManyProduct(ids, token);
     return res;
   });
 
   const getAllProducts = async () => {
     const res = await ProductService.getAllProduct();
+    return res;
+  };
+
+  const fetchAllTypeProduct = async () => {
+    const res = await ProductService.getAllTypeProduct();
     return res;
   };
 
@@ -145,7 +154,22 @@ const AdminProduct = () => {
     queryKey: ["products"],
     queryFn: getAllProducts,
   });
+
+  const queryTypeProduct = useQuery({
+    queryKey: ["type-product"],
+    queryFn: fetchAllTypeProduct,
+  });
+
+  
   const { isPending: isLoadingProducts, data: products } = queryProduct;
+  const { isSuccess: isSuccessLoadingType, data: typeProduct } = queryTypeProduct;
+  
+  useEffect(() => {
+    if(typeProduct) {
+      setTypeItems(typeProduct?.data);
+    }
+  },[typeProduct])
+
   const renderAction = () => {
     return (
       <div style={{ display: "flex", gap: "20px" }}>
@@ -168,7 +192,7 @@ const AdminProduct = () => {
   };
   const handleReset = (clearFilters) => {
     clearFilters();
-    setSearchText('');
+    setSearchText("");
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -328,8 +352,6 @@ const AdminProduct = () => {
       };
     });
 
-
-
   const { data, isPending, isSuccess, isError } = mutation;
   const {
     data: dataUpdated,
@@ -461,7 +483,7 @@ const AdminProduct = () => {
         },
       }
     );
-  }
+  };
 
   const handleCancel = () => {
     setStateProduct({
@@ -487,6 +509,7 @@ const AdminProduct = () => {
       },
     });
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -539,6 +562,38 @@ const AdminProduct = () => {
       }
     );
   };
+
+  const handleOnChangeSelectAdd = (value) => {
+    setTypeSelectAdd(value);
+    setStateProduct({
+      ...stateProduct,
+      type: value,
+    });
+  };
+
+  const handleOnChangeSelectModify = (value) => {
+    setTypeSelectModify(value);
+    setStateProductDetails({
+      ...stateProductDetails,
+      type: value,
+    });
+  };
+
+  //Phần cho select loại sản phẩm khi add
+  const [newType, setNewType] = useState("");
+  const inputRef = useRef(null);
+  const onAddTypeInputChange = (event) => {
+    setNewType(event.target.value);
+  };
+  const addTypeItem = (e) => {
+    e.preventDefault();
+    setTypeItems([...typeItems, newType || `New item`]);
+    setNewType("");
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
+  ////////////////////////////////
 
   return (
     <div>
@@ -624,14 +679,47 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Hãy nhập loại sản phẩm!",
+                  message: "Hãy chọn loại sản phẩm!",
                 },
               ]}
             >
-              <InputComponent
-                values={stateProduct.type}
-                onChange={handleOnChange}
-                name="type"
+              <Select
+                placeholder="Chọn loại sản phẩm"
+                dropdownRender={(menu) => (
+                  <>
+                    {menu}
+                    <Divider
+                      style={{
+                        margin: "8px 0",
+                      }}
+                    />
+                    <Space
+                      style={{
+                        padding: "0 8px 4px",
+                      }}
+                    >
+                      <Input
+                        placeholder="Nhập thể loại"
+                        ref={inputRef}
+                        value={newType}
+                        onChange={onAddTypeInputChange}
+                        onKeyDown={(e) => e.stopPropagation()}
+                      />
+                      <Button
+                        type="text"
+                        icon={<PlusOutlined />}
+                        onClick={addTypeItem}
+                      >
+                        Thêm thể loại
+                      </Button>
+                    </Space>
+                  </>
+                )}
+                options={typeItems.map((item) => ({
+                  label: item,
+                  value: item,
+                }))}
+                onChange={handleOnChangeSelectAdd}
               />
             </Form.Item>
 
@@ -831,14 +919,48 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Hãy nhập loại sản phẩm!",
+                  message: "Hãy chọn loại sản phẩm!",
                 },
               ]}
             >
-              <InputComponent
-                values={stateProductDetails.type}
-                onChange={handleOnChangeDetails}
-                name="type"
+              <Select
+                defaultValue={stateProductDetails?.type}
+                placeholder="Chọn loại sản phẩm"
+                dropdownRender={(menu) => (
+                  <>
+                    {menu}
+                    <Divider
+                      style={{
+                        margin: "8px 0",
+                      }}
+                    />
+                    <Space
+                      style={{
+                        padding: "0 8px 4px",
+                      }}
+                    >
+                      <Input
+                        placeholder="Nhập thể loại"
+                        ref={inputRef}
+                        value={newType}
+                        onChange={onAddTypeInputChange}
+                        onKeyDown={(e) => e.stopPropagation()}
+                      />
+                      <Button
+                        type="text"
+                        icon={<PlusOutlined />}
+                        onClick={addTypeItem}
+                      >
+                        Thêm thể loại
+                      </Button>
+                    </Space>
+                  </>
+                )}
+                options={typeItems.map((item) => ({
+                  label: item,
+                  value: item,
+                }))}
+                onChange={handleOnChangeSelectModify}
               />
             </Form.Item>
 

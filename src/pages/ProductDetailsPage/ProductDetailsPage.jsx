@@ -1,11 +1,9 @@
 import React from "react";
 import ProductDetailsComponent from "../../components/ProductDetailsComponent/ProductDetailsComponent";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Breadcrumb } from "antd";
+import { useParams } from "react-router-dom";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   return (
     <div
       style={{

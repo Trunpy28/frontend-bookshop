@@ -15,6 +15,8 @@ import {
 import React from "react";
 import {
   RatingText,
+  StatusInStockText,
+  StatusNotInStockText,
   StatusText,
   WrapperAuthor,
   WrapperButtonAddToCart,
@@ -29,26 +31,32 @@ import {
 import * as ProductService from "../../services/ProductService";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../LoadingComponent/Loading";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { addOrderProduct } from "../../redux/slices/orderSlice";
+import { convertPrice } from "../../utils";
 
 const ProductDetailsComponent = ({ idProduct }) => {
-  console.log(idProduct);
-  
+  const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+
   const fetchGetDetailsProduct = async (context) => {
     let res = {};
     const id = context?.queryKey && context?.queryKey[1];
-    if(id){
+    if (id) {
       res = await ProductService.getDetailsProduct(id);
     }
     return res?.data;
   };
-  
+
   const { isPending, data: productDetails } = useQuery({
     queryKey: ["products-details", idProduct],
     queryFn: fetchGetDetailsProduct,
     enabled: !!idProduct,
   });
-  
-  console.log("productDetails", productDetails);
+
   let maxQuantity = productDetails?.countInStock;
   const [quantity, setQuantity] = React.useState(1);
   const onIncreaseQuantity = () => {
@@ -57,7 +65,25 @@ const ProductDetailsComponent = ({ idProduct }) => {
   const onDecreaseQuantity = () => {
     if (quantity > 1) setQuantity(quantity - 1);
   };
-  
+
+  const handleAddOrderProduct = () => {
+    if (!user?.id) {
+      navigate("/sign-in", { state: location?.pathname });
+    } else {
+      dispatch(
+        addOrderProduct({
+          orderItem: {
+            name: productDetails?.name,
+            amount: quantity,
+            image: productDetails?.image,
+            price: productDetails?.discount,
+            product: productDetails?._id,
+          },
+        })
+      );
+    }
+  };
+
   return (
     <Loading isLoading={isPending}>
       <Row style={{ padding: "30px", backgroundColor: "white" }}>
@@ -68,8 +94,13 @@ const ProductDetailsComponent = ({ idProduct }) => {
             flexDirection: "column",
             alignItems: "center",
           }}
-          >
-          <Image src={productDetails?.image} alt="Product" width={"18vw"} preview={true} />
+        >
+          <Image
+            src={productDetails?.image}
+            alt="Product"
+            width={"18vw"}
+            preview={true}
+          />
           {/* <Row
             style={{
               paddingTop: "10px",
@@ -139,19 +170,30 @@ const ProductDetailsComponent = ({ idProduct }) => {
               (10 đánh giá) | Đã bán {productDetails?.selled || 0}
             </WrapperStyleTextSale>
           </div>
-          
+
           <WrapperAuthor>
-            Tác giả: {productDetails?.author}
+            Tác giả:{" "}
+            <span style={{ fontSize: "16px", fontWeight: "bold" }}>
+              {productDetails?.author}
+            </span>
           </WrapperAuthor>
 
           <WrapperPrice>
-            <WrapperOriginalPriceText>{productDetails?.price?.toLocaleString()} đ</WrapperOriginalPriceText>
-            <WrapperPriceText>{productDetails?.discount?.toLocaleString()} đ</WrapperPriceText>
+            <WrapperOriginalPriceText>
+              {convertPrice(productDetails?.price)}
+            </WrapperOriginalPriceText>
+            <WrapperPriceText>
+              {convertPrice(productDetails?.discount)}
+            </WrapperPriceText>
           </WrapperPrice>
 
           <WrapperStatus>
             <div>Tình trạng:</div>
-            <StatusText>Còn hàng</StatusText>
+            {productDetails?.countInStock > 0 ? (
+              <StatusInStockText>Còn hàng</StatusInStockText>
+            ) : (
+              <StatusNotInStockText>Hết hàng</StatusNotInStockText>
+            )}
           </WrapperStatus>
 
           <WrapperQuantity>
@@ -199,12 +241,14 @@ const ProductDetailsComponent = ({ idProduct }) => {
             </div>
           </WrapperQuantity>
 
-          <WrapperButtonAddToCart>
+          <WrapperButtonAddToCart
+            onClick={handleAddOrderProduct}
+            disabled={productDetails?.countInStock <= 0}
+          >
             <ShoppingCartOutlined /> Thêm vào giỏ hàng
           </WrapperButtonAddToCart>
         </Col>
       </Row>
-
     </Loading>
   );
 };

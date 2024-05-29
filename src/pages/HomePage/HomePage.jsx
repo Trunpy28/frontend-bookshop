@@ -15,10 +15,11 @@ import { useDebounce } from "../../hooks/useDebounce";
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
-  const searchDebounce = useDebounce(searchProduct, 1000)
+  const searchDebounce = useDebounce(searchProduct, 500)
   const [loading, setLoading] = useState(false);
+  const [limit,setLimit] = useState(5);
+  const [typeProducts, setTypeProducts] = useState([])
 
-  const [limit,setLimit] = useState(6);
   const fetchProductAll = async (context) => {
     const search = context?.queryKey && context?.queryKey[2];
     const limit = context?.queryKey && context?.queryKey[1];
@@ -26,6 +27,12 @@ const HomePage = () => {
     return res;
   };
 
+  const fetchAllTypeProduct = async () => {
+    const  res = await ProductService.getAllTypeProduct();
+    if(res?.status === 'OK') {
+      setTypeProducts(res?.data);
+    }
+  }
 
   const { isPending, data: products, isPlaceholderData, } = useQuery({
     queryKey: ["products",limit,searchDebounce],
@@ -35,8 +42,10 @@ const HomePage = () => {
     placeholderData: true,
   });
   
-  console.log(products?.total === products?.data?.length);
-  console.log('isPlaceholderData', products);
+  useEffect(() => {
+    fetchAllTypeProduct();
+  },[])
+
   return (
     <div style={{ padding: "10px 15vw", backgroundColor: "#F0F0F0" }}>
       <SliderComponent
@@ -78,7 +87,7 @@ const HomePage = () => {
               fontWeight: "600",
             }}
             onClick={() => {
-              setLimit((prev) => prev + 6);
+              setLimit((prev) => prev + 5);
             }}
             disabled={products?.total === products?.data?.length  || products?.totalPage === 1}
           >

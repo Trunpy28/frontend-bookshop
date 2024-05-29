@@ -18,15 +18,15 @@ export const BigLabel = styled.div`
     padding: 15px 30px;
 `
 
-export const TypeLink = styled(Link)`
+export const TypeLink = styled.div`
     font-size: 16px;
     font-weight: 500;
     color: #333333;
-    text-decoration: none;
     padding: 5px 30px;
     &:hover{
         color: #00A651;
     }
+    cursor: pointer;
 `
 
 export const TypeList = styled.ul`

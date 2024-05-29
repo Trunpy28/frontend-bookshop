@@ -49,7 +49,6 @@ const ProfilePage = () => {
   }, [user]);
 
   useEffect(() => {
-    console.log(isSuccess, isError);
     if (isSuccess) {
       message.success("Cập nhật thông tin thành công");
       handleGetDetailsUser(user?.id, user?.access_token);

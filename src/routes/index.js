@@ -8,6 +8,11 @@ import SignUpPage from "../pages/SignUpPage/SignUpPage";
 import ProductDetailsPage from "../pages/ProductDetailsPage/ProductDetailsPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import AdminPage from "../pages/AdminPage/AdminPage";
+import PaymentPage from "../pages/PaymentPage/PaymentPage";
+import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
+import MyOrderPage from "../pages/MyOrder/MyOrderPage";
+import DetailsOrderPage from "../pages/DetailsOrderPage/DetailsOrderPage";
+
 
 export const routes =  [
     { 
@@ -23,13 +28,36 @@ export const routes =  [
         isPrivate: false
     },
     { 
-        path: '/product',
+        path: '/my-order',
+        page: MyOrderPage,
+        isShowHeader: true,
+        isPrivate: false
+    },
+    {
+        path: '/details-order/:id',
+        page: DetailsOrderPage,
+        isShowHeader: true
+    },
+    { 
+        path: '/payment',
+        page: PaymentPage,
+        isShowHeader: true,
+        isPrivate: false
+    },
+    { 
+        path: '/order-success',
+        page: OrderSuccess,
+        isShowHeader: true,
+        isPrivate: false
+    },
+    { 
+        path: '/products',
         page: ProductPage,
         isShowHeader: true,
         isPrivate: false
     },
     { 
-        path: '/type',
+        path: '/product/:type',
         page: TypeProductPage,
         isShowHeader: true,
         isPrivate: false
