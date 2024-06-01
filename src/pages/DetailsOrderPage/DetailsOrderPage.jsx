@@ -64,7 +64,7 @@ const DetailsOrderPage = () => {
               marginBottom: "16px",
             }}
           >
-            Chi tiết đơn hàng #{id}
+            Chi tiết đơn hàng #{id} {data?.isCancelled ? "(Đã hủy)" : ""}
           </h3>
           <WrapperHeaderUser>
             <WrapperInfoUser>

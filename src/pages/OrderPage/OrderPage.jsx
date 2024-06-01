@@ -342,19 +342,17 @@ const OrderPage = () => {
                         />
                         <InputNumber
                           min={1}
-                          // max={maxQuantity}
+                          max={orderItem?.countInStock}
                           value={orderItem?.amount}
-                          controls={false}
-                          // onChange={(value) => {
-                          //   setQuantity(value);
-                          // }}
+                          controls={false} 
+                          readOnly
                         />
                         <Button
                           icon={<PlusOutlined />}
                           onClick={() =>
                             handleChangeCount("increase", orderItem?.product)
                           }
-                          // disabled={orderItem?.amount >= maxQuantity}
+                          disabled={orderItem?.amount >= orderItem?.countInStock}
                         />
                       </ConfigProvider>
                     </WrapperCountOrder>

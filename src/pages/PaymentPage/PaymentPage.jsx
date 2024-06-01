@@ -152,7 +152,7 @@ const PaymentPage = () => {
         },
       });
     } else if (isError || dataAdd?.status === "ERR") {
-      message.error("Đặt hàng thất bại!");
+      message.error("Đặt hàng thất bại! " + dataAdd?.message);
     }
   }, [isSuccess, isError]);
 

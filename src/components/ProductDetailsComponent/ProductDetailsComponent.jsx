@@ -12,7 +12,7 @@ import {
   PlusOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   RatingText,
   StatusInStockText,
@@ -57,7 +57,12 @@ const ProductDetailsComponent = ({ idProduct }) => {
     enabled: !!idProduct,
   });
 
-  let maxQuantity = productDetails?.countInStock;
+  const [maxQuantity,setMaxQuantity] = useState(productDetails?.countInStock);
+
+  useEffect(()=>{
+    setMaxQuantity(productDetails?.countInStock);
+  },[productDetails])
+
   const [quantity, setQuantity] = React.useState(1);
   const onIncreaseQuantity = () => {
     if (quantity < maxQuantity) setQuantity(quantity + 1);
@@ -78,9 +83,11 @@ const ProductDetailsComponent = ({ idProduct }) => {
             image: productDetails?.image,
             price: productDetails?.discount,
             product: productDetails?._id,
+            countInStock: productDetails?.countInStock
           },
         })
       );
+      setMaxQuantity(prev => prev - quantity);
     }
   };
 
@@ -243,7 +250,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
 
           <WrapperButtonAddToCart
             onClick={handleAddOrderProduct}
-            disabled={productDetails?.countInStock <= 0}
+            disabled={productDetails?.countInStock <= 0 || quantity > maxQuantity}
           >
             <ShoppingCartOutlined /> Thêm vào giỏ hàng
           </WrapperButtonAddToCart>

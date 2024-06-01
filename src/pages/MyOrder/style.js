@@ -46,7 +46,7 @@ export const WrapperListOrder = styled.div`
 export const WrapperFooterItem = styled.div`
   display: flex;
   flex-direction : column;
-  gap: 10px;
+  gap: 20px;
   border-top: 1px solid rgb(235, 235, 240);
   width: 100%;
   align-items:flex-end;
@@ -86,4 +86,5 @@ export const WrapperStatus = styled.div`
   border-bottom: 1px solid rgb(235, 235, 240);
   flex-direction:column;
   font-size: 16px;
+  margin-top: 10px;
 `
