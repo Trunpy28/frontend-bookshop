@@ -14,6 +14,8 @@ const initialState = {
     paidAt: '',
     isDelivery: false,
     deliveryAt: '',
+    isSuccessAddItem: false,
+    isErrorAddItem: false
 }
 
 export const orderSlice = createSlice({
@@ -24,9 +26,20 @@ export const orderSlice = createSlice({
         const {orderItem} = action?.payload;
         const itemOrder = state?.orderItems?.find((item) => item?.product === orderItem?.product);
         if(itemOrder) {
-            itemOrder.amount += orderItem?.amount;
+            itemOrder.countInStock = orderItem?.countInStock;
+            if(itemOrder.amount + orderItem?.amount <= itemOrder.countInStock){
+                itemOrder.amount += orderItem?.amount;
+                state.isSuccessAddItem = true;
+                state.isErrorAddItem = false;
+            }
+            else{
+                state.isSuccessAddItem = false;
+                state.isErrorAddItem = true;
+            }
         } else {
             state.orderItems.push(orderItem);
+            state.isSuccessAddItem = true;
+            state.isErrorAddItem = false;
         }
     },
     increaseAmount: (state,action) => {
@@ -96,11 +109,35 @@ export const orderSlice = createSlice({
         state.paidAt = '';
         state.isDelivery = false;
         state.deliveryAt = '';
-    }
+        state.isSuccessAddItem = false;
+        state.isErrorAddItem = false;
+    },
+    emptyOrder: (state, action) => {
+        state.orderItems = [];
+        state.orderItemsSelected = [];
+
+        state.shippingAddress = {};
+        state.paymentMethod = '';
+        state.itemsPrice = 0;
+        state.shippingPrice = 0;
+        state.discountPrice = 0;
+        state.totalPrice = 0;
+        state.user = '';
+        state.isPaid = false;
+        state.paidAt = '';
+        state.isDelivery = false;
+        state.deliveryAt = '';
+        state.isSuccessAddItem = false;
+        state.isErrorAddItem = false;
+    },
+    resetAddItemState: (state) => {
+        state.isSuccessAddItem = false;
+        state.isErrorAddItem = false;
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { addOrderProduct ,increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, selectedOrder, clearOrder } = orderSlice.actions
+export const { addOrderProduct ,increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, selectedOrder, clearOrder, emptyOrder, resetAddItemState } = orderSlice.actions
 
 export default orderSlice.reducer

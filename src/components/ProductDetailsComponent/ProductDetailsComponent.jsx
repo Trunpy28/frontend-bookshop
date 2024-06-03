@@ -6,6 +6,7 @@ import {
   InputNumber,
   Button,
   ConfigProvider,
+  message,
 } from "antd";
 import {
   MinusOutlined,
@@ -33,11 +34,12 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "../LoadingComponent/Loading";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addOrderProduct } from "../../redux/slices/orderSlice";
+import { addOrderProduct, resetAddItemState } from "../../redux/slices/orderSlice";
 import { convertPrice } from "../../utils";
 
 const ProductDetailsComponent = ({ idProduct }) => {
   const user = useSelector((state) => state.user);
+  const order = useSelector((state) => state.order);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -70,6 +72,17 @@ const ProductDetailsComponent = ({ idProduct }) => {
   const onDecreaseQuantity = () => {
     if (quantity > 1) setQuantity(quantity - 1);
   };
+
+  useEffect(() => {
+    if(order.isSuccessAddItem && !order.isErrorAddItem){
+      message.success("Thêm sản phẩm vào giỏ hàng thành công!");
+    }else if(!order.isSuccessAddItem && order.isErrorAddItem){
+      message.error("Thêm sản phẩm vào giỏ hàng thất bại do không đủ số lượng trong kho!");
+    }
+    if(order.isSuccessAddItem || order.isErrorAddItem) {
+      dispatch(resetAddItemState());
+    }
+  },[order.isSuccessAddItem, order.isErrorAddItem])
 
   const handleAddOrderProduct = () => {
     if (!user?.id) {
