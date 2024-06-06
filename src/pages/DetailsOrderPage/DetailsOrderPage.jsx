@@ -21,7 +21,7 @@ import { useEffect } from "react";
 import * as OrderService from "../../services/OrderService";
 import { useQuery } from "@tanstack/react-query";
 import { orderConstant } from "../../constant";
-import { convertPrice } from "../../utils";
+import { convertPrice, timeTranform } from "../../utils";
 import { useMemo } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 
@@ -66,6 +66,9 @@ const DetailsOrderPage = () => {
           >
             Chi tiết đơn hàng #{id} {data?.isCancelled ? "(Đã hủy)" : ""}
           </h3>
+          <div style={{ marginBottom: "20px", fontSize: "16px" }}>
+            Thời gian đặt hàng: {timeTranform(data?.createdAt)}
+          </div>
           <WrapperHeaderUser>
             <WrapperInfoUser>
               <WrapperLabel>Địa chỉ người nhận</WrapperLabel>

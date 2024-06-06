@@ -722,23 +722,6 @@ const AdminUser = () => {
               />
             </Form.Item>
 
-            {/* <Form.Item
-              label="Vai trò"
-              name="isAdmin"
-              rules={[
-                {
-                  required: true,
-                  message: "Hãy chọn vai trò của người dùng!",
-                },
-              ]}
-            >
-              <InputComponent
-                values={stateUser.isAdmin}
-                onChange={handleOnChange}
-                name="isAdmin"
-              />
-            </Form.Item> */}
-
             <Form.Item
               label="Ảnh đại diện"
               name="avatar"
@@ -908,23 +891,6 @@ const AdminUser = () => {
                 ]}
               />
             </Form.Item>
-
-            {/* <Form.Item
-              label="Vai trò"
-              name="isAdmin"
-              rules={[
-                {
-                  required: true,
-                  message: "Hãy chọn vai trò của người dùng!",
-                },
-              ]}
-            >
-              <InputComponent
-                values={stateUserDetails.isAdmin.toString()}
-                onChange={handleOnChangeDetails}
-                name="isAdmin"
-              />
-            </Form.Item> */}
 
             <Form.Item
               label="Ảnh đại diện"

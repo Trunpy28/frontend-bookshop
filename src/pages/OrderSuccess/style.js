@@ -30,6 +30,7 @@ export const WrapperStyleHeaderDelivery = styled.div`
 export const WrapperContainer = styled.div`
   width: 60vw;
   min-width: 50vw;
+  background: #fff;
 `;
 
 export const WrapperListOrder = styled.div``;

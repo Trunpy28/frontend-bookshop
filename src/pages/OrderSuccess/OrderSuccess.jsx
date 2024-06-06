@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import Loading from "../../components/LoadingComponent/Loading";
 import { orderConstant } from "../../constant";
-import { convertPrice } from "../../utils";
+import { convertPrice, timeTranform } from "../../utils";
 
 const OrderSuccess = () => {
   const order = useSelector((state) => state.order);
@@ -41,6 +41,9 @@ const OrderSuccess = () => {
           </h3>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <WrapperContainer>
+              <WrapperInfo style={{fontWeight: '500'}}>
+                Thời gian đặt hàng: {timeTranform(state?.createdAt)}
+              </WrapperInfo>
               <WrapperInfo>
                 <div>
                   <Label>Phương thức giao hàng</Label>

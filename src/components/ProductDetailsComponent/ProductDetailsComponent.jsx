@@ -13,7 +13,7 @@ import {
   PlusOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   RatingText,
   StatusInStockText,
@@ -34,8 +34,13 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "../LoadingComponent/Loading";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addOrderProduct, resetAddItemState } from "../../redux/slices/orderSlice";
-import { convertPrice } from "../../utils";
+import {
+  addOrderProduct,
+  resetAddItemState,
+} from "../../redux/slices/orderSlice";
+import { convertPrice, initFacebookSDK } from "../../utils";
+import LikeButtonComponent from "../LikeButtonComponent/LikeButtonComponent";
+import CommentComponent from "../CommentComponent/CommentComponent";
 
 const ProductDetailsComponent = ({ idProduct }) => {
   const user = useSelector((state) => state.user);
@@ -59,11 +64,11 @@ const ProductDetailsComponent = ({ idProduct }) => {
     enabled: !!idProduct,
   });
 
-  const [maxQuantity,setMaxQuantity] = useState(productDetails?.countInStock);
+  const [maxQuantity, setMaxQuantity] = useState(productDetails?.countInStock);
 
-  useEffect(()=>{
+  useEffect(() => {
     setMaxQuantity(productDetails?.countInStock);
-  },[productDetails])
+  }, [productDetails]);
 
   const [quantity, setQuantity] = React.useState(1);
   const onIncreaseQuantity = () => {
@@ -74,15 +79,21 @@ const ProductDetailsComponent = ({ idProduct }) => {
   };
 
   useEffect(() => {
-    if(order.isSuccessAddItem && !order.isErrorAddItem){
+    initFacebookSDK();
+  }, []);
+
+  useEffect(() => {
+    if (order.isSuccessAddItem && !order.isErrorAddItem) {
       message.success("Thêm sản phẩm vào giỏ hàng thành công!");
-    }else if(!order.isSuccessAddItem && order.isErrorAddItem){
-      message.error("Thêm sản phẩm vào giỏ hàng thất bại do không đủ số lượng trong kho!");
+    } else if (!order.isSuccessAddItem && order.isErrorAddItem) {
+      message.error(
+        "Thêm sản phẩm vào giỏ hàng thất bại do không đủ số lượng trong kho!"
+      );
     }
-    if(order.isSuccessAddItem || order.isErrorAddItem) {
+    if (order.isSuccessAddItem || order.isErrorAddItem) {
       dispatch(resetAddItemState());
     }
-  },[order.isSuccessAddItem, order.isErrorAddItem])
+  }, [order.isSuccessAddItem, order.isErrorAddItem]);
 
   const handleAddOrderProduct = () => {
     if (!user?.id) {
@@ -96,11 +107,11 @@ const ProductDetailsComponent = ({ idProduct }) => {
             image: productDetails?.image,
             price: productDetails?.discount,
             product: productDetails?._id,
-            countInStock: productDetails?.countInStock
+            countInStock: productDetails?.countInStock,
           },
         })
       );
-      setMaxQuantity(prev => prev - quantity);
+      setMaxQuantity((prev) => prev - quantity);
     }
   };
 
@@ -121,51 +132,6 @@ const ProductDetailsComponent = ({ idProduct }) => {
             width={"18vw"}
             preview={true}
           />
-          {/* <Row
-            style={{
-              paddingTop: "10px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignSelf: "stretch",
-            }}
-          >
-            <Image
-              span={4}
-              src={bookImgSmall}
-              alt="Img small"
-              preview={true}
-              width={"5vw"}
-            />
-            <Image
-              span={4}
-              src={bookImgSmall}
-              alt="Img small"
-              preview={true}
-              width={"5vw"}
-            />
-            <Image
-              span={4}
-              src={bookImgSmall}
-              alt="Img small"
-              preview={true}
-              width={"5vw"}
-            />
-            <Image
-              span={4}
-              src={bookImgSmall}
-              alt="Img small"
-              preview={true}
-              width={"5vw"}
-            />
-
-            <Image
-              span={4}
-              src={bookImgSmall}
-              alt="Img small"
-              preview={true}
-              width={"5vw"}
-            />
-          </Row> */}
         </Col>
         <Col span={14} style={{ padding: "10px 5vw" }}>
           <WrapperStyleNameProduct>
@@ -190,6 +156,14 @@ const ProductDetailsComponent = ({ idProduct }) => {
               (10 đánh giá) | Đã bán {productDetails?.selled || 0}
             </WrapperStyleTextSale>
           </div>
+
+          <LikeButtonComponent
+            dataHref={
+              process.env.REACT_APP_IS_LOCAL
+                ? "https://developers.facebook.com/docs/plugins/"
+                : window.location.href
+            }
+          />
 
           <WrapperAuthor>
             Tác giả:{" "}
@@ -263,12 +237,30 @@ const ProductDetailsComponent = ({ idProduct }) => {
 
           <WrapperButtonAddToCart
             onClick={handleAddOrderProduct}
-            disabled={productDetails?.countInStock <= 0 || quantity > maxQuantity}
+            disabled={
+              productDetails?.countInStock <= 0 || quantity > maxQuantity
+            }
           >
             <ShoppingCartOutlined /> Thêm vào giỏ hàng
           </WrapperButtonAddToCart>
         </Col>
       </Row>
+
+      <div style={{ marginTop: "40px" }}>
+        <div
+          style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}
+        >
+          NHẬN XÉT
+        </div>
+        <CommentComponent
+          dataHref={
+            process.env.REACT_APP_IS_LOCAL
+              ? "https://developers.facebook.com/docs/plugins/comments#configurator"
+              : window.location.href
+          }
+          width="100%"
+        />
+      </div>
     </Loading>
   );
 };

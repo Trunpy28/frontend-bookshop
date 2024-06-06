@@ -18,12 +18,15 @@ import { convertPrice } from "../../utils";
 import { useQuery } from "@tanstack/react-query";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { useMutationHooks } from "../../hooks/useMutationHook";
+import ModalComponent from "../../components/ModalComponent/ModalComponent";
 
 const MyOrderPage = () => {
   const user = useSelector((state) => state.user);
   const location = useLocation();
   const navigate = useNavigate();
   const { state } = location;
+  const [isShowModalCancel, setIsShowModalCancel] = useState(false);
+  const [cancelledOrder, setCancellOrder] = useState({});
 
   const fetchMyOrders = async () => {
     const res = await OrderService.getOrdersByUserId(state?.id, state?.token);
@@ -66,7 +69,9 @@ const MyOrderPage = () => {
         },
       }
     );
+    setIsShowModalCancel(false);
   };
+
   const {
     isPending: isLoadingCancel,
     isSuccess: isSuccessCancel,
@@ -143,9 +148,19 @@ const MyOrderPage = () => {
                   return (
                     <WrapperItemOrder key={order?._id}>
                       <WrapperStatus>
-                        <span style={{ fontWeight: "bold",marginBottom: "10px" }}>Trạng thái</span>
+                        <span
+                          style={{ fontWeight: "bold", marginBottom: "10px" }}
+                        >
+                          Trạng thái
+                        </span>
                         {order?.isCancelled ? (
-                          <div style={{ fontWeight: "bold", fontSize: "16px", opacity:"0.8"}}>
+                          <div
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: "16px",
+                              opacity: "0.8",
+                            }}
+                          >
                             Đã hủy
                           </div>
                         ) : (
@@ -196,7 +211,10 @@ const MyOrderPage = () => {
                             !order?.isPaid &&
                             !order?.isCancelled && (
                               <ButtonComponent
-                                onClick={() => handleCanceOrder(order)}
+                                onClick={() => {
+                                  setCancellOrder(order);
+                                  setIsShowModalCancel(true);
+                                }}
                                 size={40}
                                 styleButton={{
                                   height: "36px",
@@ -249,6 +267,28 @@ const MyOrderPage = () => {
             )}
           </div>
         </div>
+        <ConfigProvider
+          theme={{
+            components: {
+              token: {
+                
+              },
+            },
+          }}
+        >
+          <ModalComponent
+            title="Hủy đơn hàng"
+            open={isShowModalCancel}
+            onOk={() => handleCanceOrder(cancelledOrder)}
+            onCancel={() => setIsShowModalCancel(false)}
+            okButtonProps={{ style: { backgroundColor: '#00bc16' } }}
+            cancelText="Hủy bỏ"
+          >
+            <Loading isLoading={isLoadingCancel}>
+              <p>Bạn có chắc muốn hủy đơn hàng này?</p>
+            </Loading>
+          </ModalComponent>
+        </ConfigProvider>
       </WrapperContainer>
     </Loading>
   );

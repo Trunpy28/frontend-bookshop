@@ -483,6 +483,8 @@ const AdminProduct = () => {
         },
       }
     );
+
+    return mutationDeletedMany;
   };
 
   const handleCancel = () => {

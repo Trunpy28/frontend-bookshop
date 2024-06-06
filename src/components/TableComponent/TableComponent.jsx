@@ -3,6 +3,7 @@ import { Button, ConfigProvider, Table } from "antd";
 import Loading from "../LoadingComponent/Loading";
 import { FileExcelOutlined } from "@ant-design/icons";
 import { Excel } from "antd-table-saveas-excel";
+import ModalComponent from "../ModalComponent/ModalComponent";
 
 const TableComponent = (props) => {
   const {
@@ -14,6 +15,7 @@ const TableComponent = (props) => {
   } = props;
 
   const [rowSelectedKeys, setRowSelectedKeys] = useState([]);
+  const [isModalOpenDeleteMany, setIsModalOpenDeleteMany] = useState(false);
   const newColumnExport = useMemo(() => {
     const arr = columns?.filter((column) => column.dataIndex !== "action");
     return arr;
@@ -45,6 +47,7 @@ const TableComponent = (props) => {
   const handleDeleteAll = () => {
     handleDeleteMany(rowSelectedKeys);
     setRowSelectedKeys([]);
+    setIsModalOpenDeleteMany(false);
   };
 
   return (
@@ -65,7 +68,7 @@ const TableComponent = (props) => {
             color: "red",
             width: "fit-content",
           }}
-          onClick={handleDeleteAll}
+          onClick={() => {setIsModalOpenDeleteMany(true)}}
         >
           Xóa tất cả
         </div>
@@ -92,6 +95,15 @@ const TableComponent = (props) => {
           />
         </ConfigProvider>
       </div>
+      <ModalComponent
+        title="Xóa nhiều dữ liệu"
+        open={isModalOpenDeleteMany}
+        onOk={handleDeleteAll}
+        onCancel={() => {setIsModalOpenDeleteMany(false)}}
+        cancelText="Hủy bỏ"
+      >
+        <p>Bạn có chắc muốn xóa các mục đã chọn?</p>
+      </ModalComponent>
     </Loading>
   );
 };

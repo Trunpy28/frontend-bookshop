@@ -127,11 +127,6 @@ const PaymentPage = () => {
 
   useEffect(() => {
     if (isSuccess && dataAdd?.status === "OK") {
-      // const arrayOrdered = []
-      // order?.orderItemsSlected?.forEach(element => {
-      //   arrayOrdered.push(element.product)
-      // });
-      // dispatch(removeAllOrderProduct({listChecked: arrayOrdered}))
       message.success("Đặt hàng thành công!");
       const arrayOrdered = []
       order?.orderItemsSelected?.forEach(element => {
@@ -139,7 +134,6 @@ const PaymentPage = () => {
       });
 
       dispatch(clearOrder({listChecked: arrayOrdered}));
-      
       navigate("/order-success", {
         state: {
           delivery,
@@ -148,6 +142,7 @@ const PaymentPage = () => {
           tempPrice: priceMemo,
           shippingPrice: deliveryPriceMemo,
           totalPrice: totalPriceMemo,
+          createdAt: dataAdd?.data?.createdAt
         },
       });
     } else if (isError || dataAdd?.status === "ERR") {

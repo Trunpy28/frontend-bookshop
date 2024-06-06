@@ -3,11 +3,12 @@ import { ConfigProvider, Menu } from "antd";
 import {
   AppstoreOutlined,
   UserOutlined,
-  SettingOutlined,
+  ShoppingOutlined,
 } from "@ant-design/icons";
 import HeaderComponent from "../../components/HeaderComponent/HeaderComponent";
 import AdminUser from "../../components/AdminUser/AdminUser";
 import AdminProduct from "../../components/AdminProduct/AdminProduct";
+import AdminOrder from "../../components/AdminOrder/AdminOrder";
 
 const AdminPage = () => {
   const [keySelected, setKeySelected] = useState("user");
@@ -18,8 +19,10 @@ const AdminPage = () => {
         return <AdminUser />;
       case 'product':
         return <AdminProduct />;
+      case 'order':
+        return <AdminOrder />;
       default:
-        return <div>Default</div>;
+        return <div></div>;
     }
   };
 
@@ -37,6 +40,15 @@ const AdminPage = () => {
       label: "Sản phẩm",
       icon: <AppstoreOutlined />,
     },
+    {
+      type: "divider",
+    },
+    {
+      key: "order",
+      label: "Đơn hàng",
+      icon: <ShoppingOutlined />,
+    },
+
   ];
 
   const handleOnClick = ({ key }) => {
