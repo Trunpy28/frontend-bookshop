@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Badge, Col, Popover } from "antd";
 import {
   WrapperHeader,
@@ -108,10 +108,15 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     </div>
   );
 
-  const onSearch = (e) => {
-    setSearch(e.target.value);
-    dispatch(searchProduct(e.target.value));
+  const onSearch = (value, event) => {
+    setSearch(value);
+    dispatch(searchProduct(value));
   };
+
+  useLayoutEffect(() => {
+    setSearch('');
+    dispatch(searchProduct(''));
+  },[window.location.href])
 
   return (
     <div>
@@ -145,7 +150,9 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                   </div>
                 }
                 size="large"
-                onChange={onSearch}
+                onSearch={onSearch}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </ConfigProvider>
           )}

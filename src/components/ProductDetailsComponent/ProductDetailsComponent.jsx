@@ -250,6 +250,15 @@ const ProductDetailsComponent = ({ idProduct }) => {
         <div
           style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}
         >
+          Thông tin sản phẩm
+        </div>
+        <div style={{fontSize: '15px', backgroundColor: "white", padding: '20px 20px', lineHeight: '1.8', whiteSpace: 'pre-line' }}>{productDetails?.description}</div>
+      </div>
+
+      <div style={{ marginTop: "40px" }}>
+        <div
+          style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}
+        >
           NHẬN XÉT
         </div>
         <CommentComponent

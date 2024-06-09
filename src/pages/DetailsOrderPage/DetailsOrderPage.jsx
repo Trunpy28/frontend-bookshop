@@ -1,23 +1,17 @@
 import React from "react";
 import {
   Label,
-  WrapperAllPrice,
   WrapperContentInfo,
   WrapperCountOrder,
   WrapperHeaderUser,
   WrapperInfoUser,
-  WrapperItem,
-  WrapperItemLabel,
   WrapperItemOrder,
   WrapperLabel,
-  WrapperNameProduct,
   WrapperNameProductOrder,
-  WrapperProduct,
   WrapperStyleContent,
   WrapperStyleHeader,
 } from "./style";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
 import * as OrderService from "../../services/OrderService";
 import { useQuery } from "@tanstack/react-query";
 import { orderConstant } from "../../constant";

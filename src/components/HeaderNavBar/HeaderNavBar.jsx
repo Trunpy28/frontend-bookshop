@@ -62,10 +62,7 @@ const HeaderNavBar = () => {
           <LinkNavBar to={'/'}>
             <Space>TRANG CHỦ</Space>
           </LinkNavBar>
-          <LinkNavBar onClick={(e) => e.preventDefault()}>
-            <Space>TIN TỨC</Space>
-          </LinkNavBar>
-          <LinkNavBar onClick={(e) => e.preventDefault()}>
+          <LinkNavBar to={'/contact'}>
             <Space>LIÊN HỆ</Space>
           </LinkNavBar>
         </ConfigProvider>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BigLabel, FilterByGroup, FilterByLabel, NavBarWrapper, TypeLink, TypeList } from './style'
+import { BigLabel, NavBarWrapper, TypeLink, TypeList } from './style'
 import {RightOutlined} from '@ant-design/icons'
 import * as ProductService from "../../services/ProductService";
 import { useNavigate } from 'react-router-dom';
@@ -31,12 +31,6 @@ const NavbarComponent = () => {
         <TypeList>
             {productTypes}
         </TypeList>
-        <BigLabel>LỌC SẢN PHẨM</BigLabel>
-        <FilterByGroup>
-            <FilterByLabel>Theo đánh giá</FilterByLabel>
-
-        </FilterByGroup>
-
     </NavBarWrapper>
   )
 }

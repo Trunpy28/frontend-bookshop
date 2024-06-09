@@ -12,6 +12,7 @@ import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
 import MyOrderPage from "../pages/MyOrder/MyOrderPage";
 import DetailsOrderPage from "../pages/DetailsOrderPage/DetailsOrderPage";
+import ContactPage from "../pages/ContactPage/ContactPage";
 
 
 export const routes =  [
@@ -83,6 +84,12 @@ export const routes =  [
     { 
         path: '/profile-user',
         page: ProfilePage,
+        isShowHeader: true,
+        isPrivate: false
+    },
+    { 
+        path: '/contact',
+        page: ContactPage,
         isShowHeader: true,
         isPrivate: false
     },

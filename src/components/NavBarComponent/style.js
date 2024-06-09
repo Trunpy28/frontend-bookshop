@@ -34,6 +34,7 @@ export const TypeList = styled.ul`
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-bottom: 15px;
 `
 
 export const FilterByLabel = styled.div`

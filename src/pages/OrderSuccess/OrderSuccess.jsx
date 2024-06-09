@@ -1,5 +1,4 @@
-import { ConfigProvider, Form, InputNumber, message } from "antd";
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import {
   Label,
   WrapperInfo,
@@ -19,8 +18,6 @@ import { orderConstant } from "../../constant";
 import { convertPrice, timeTranform } from "../../utils";
 
 const OrderSuccess = () => {
-  const order = useSelector((state) => state.order);
-  const user = useSelector((state) => state.user);
   const location = useLocation();
   const navigate = useNavigate();
   const { state } = location;

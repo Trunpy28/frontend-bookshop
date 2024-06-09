@@ -1,6 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Divider, Form, Input, Select, Space } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Divider,
+  Form,
+  Input,
+  Row,
+  Select,
+  Space,
+  Statistic,
+} from "antd";
 import {
   PlusOutlined,
   EditOutlined,
@@ -19,6 +30,7 @@ import { useQuery } from "@tanstack/react-query";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import { useSelector } from "react-redux";
 import ModalComponent from "../ModalComponent/ModalComponent";
+import CountUp from "react-countup";
 
 const AdminProduct = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +47,21 @@ const AdminProduct = () => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
+
+  const productsQuantityFormatter = (value) => (
+    <CountUp
+      end={value}
+      separator="."
+      style={{ color: "green", fontWeight: "bold" }}
+    />
+  );
+  const typeProductsFormatter = (value) => (
+    <CountUp
+      end={value}
+      separator="."
+      style={{ color: "#CD3238", fontWeight: "bold" }}
+    />
+  );
 
   const [stateProduct, setStateProduct] = useState({
     name: "",
@@ -160,15 +187,15 @@ const AdminProduct = () => {
     queryFn: fetchAllTypeProduct,
   });
 
-  
   const { isPending: isLoadingProducts, data: products } = queryProduct;
-  const { isSuccess: isSuccessLoadingType, data: typeProduct } = queryTypeProduct;
-  
+  const { isSuccess: isSuccessLoadingType, data: typeProduct } =
+    queryTypeProduct;
+
   useEffect(() => {
-    if(typeProduct) {
+    if (typeProduct) {
       setTypeItems(typeProduct?.data);
     }
-  },[typeProduct])
+  }, [typeProduct]);
 
   const renderAction = () => {
     return (
@@ -600,7 +627,14 @@ const AdminProduct = () => {
   return (
     <div>
       <WrapperHeader>Quản lý sản phẩm</WrapperHeader>
-      <div style={{ marginTop: "10px" }}>
+      <div
+        style={{
+          marginTop: "10px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Button
           style={{
             height: "150px",
@@ -612,6 +646,27 @@ const AdminProduct = () => {
         >
           <PlusOutlined style={{ fontSize: "40px" }} />
         </Button>
+        <Row gutter={40} style={{ width: "40vw" }}>
+          <Col span={10}>
+            <Card style={{ border: "1px solid #00B55F" }}>
+              <Statistic
+                title="Số sản phẩm"
+                value={products?.data?.length}
+                formatter={productsQuantityFormatter}
+              />
+            </Card>
+          </Col>
+          <Col span={10}>
+            <Card style={{ border: "1px solid red" }}>
+              <Statistic
+                title="Phân loại sản phẩm"
+                value={typeProduct?.data?.length}
+                precision={2}
+                formatter={typeProductsFormatter}
+              />
+            </Card>
+          </Col>
+        </Row>
       </div>
       <div style={{ marginTop: "20px" }}>
         <TableComponent
@@ -794,23 +849,6 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label="Mô tả"
-              name="description"
-              rules={[
-                {
-                  required: true,
-                  message: "Hãy nhập mô tả sản phẩm!",
-                },
-              ]}
-            >
-              <InputComponent
-                values={stateProduct.description}
-                onChange={handleOnChange}
-                name="description"
-              />
-            </Form.Item>
-
-            <Form.Item
               label="Tác giả"
               name="author"
               rules={[
@@ -855,6 +893,24 @@ const AdminProduct = () => {
                   />
                 )}
               </WrapperUploadFile>
+            </Form.Item>
+
+            <Form.Item
+              label="Mô tả"
+              name="description"
+              rules={[
+                {
+                  required: true,
+                  message: "Hãy nhập mô tả sản phẩm!",
+                },
+              ]}
+            >
+              <Input.TextArea
+                values={stateProduct.description}
+                onChange={handleOnChange}
+                name="description"
+                autoSize
+              />
             </Form.Item>
 
             <Form.Item
@@ -1035,23 +1091,6 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label="Mô tả"
-              name="description"
-              rules={[
-                {
-                  required: true,
-                  message: "Hãy nhập mô tả sản phẩm!",
-                },
-              ]}
-            >
-              <InputComponent
-                values={stateProductDetails.description}
-                onChange={handleOnChangeDetails}
-                name="description"
-              />
-            </Form.Item>
-
-            <Form.Item
               label="Tác giả"
               name="author"
               rules={[
@@ -1096,6 +1135,24 @@ const AdminProduct = () => {
                   />
                 )}
               </WrapperUploadFile>
+            </Form.Item>
+
+            <Form.Item
+              label="Mô tả"
+              name="description"
+              rules={[
+                {
+                  required: true,
+                  message: "Hãy nhập mô tả sản phẩm!",
+                },
+              ]}
+            >
+              <Input.TextArea
+                values={stateProductDetails.description}
+                onChange={handleOnChangeDetails}
+                name="description"
+                autoSize
+              />
             </Form.Item>
 
             <Form.Item

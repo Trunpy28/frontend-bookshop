@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import slider1 from "../../assets/images/slider1.jpg";
 import slider2 from "../../assets/images/slider2.webp";
@@ -15,42 +15,67 @@ import { useDebounce } from "../../hooks/useDebounce";
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
-  const searchDebounce = useDebounce(searchProduct, 500)
+  const searchDebounce = useDebounce(searchProduct, 10);
   const [loading, setLoading] = useState(false);
-  const [limit,setLimit] = useState(5);
-  const [typeProducts, setTypeProducts] = useState([])
+  const [limit, setLimit] = useState(5);
+  const [typeProducts, setTypeProducts] = useState([]);
+  const [yPosition, setYPosition] = useState(0);
 
   const fetchProductAll = async (context) => {
     const search = context?.queryKey && context?.queryKey[2];
     const limit = context?.queryKey && context?.queryKey[1];
-    const res = await ProductService.getAllProduct(search,limit);
+    const res = await ProductService.getAllProduct(search, limit);
     return res;
   };
 
   const fetchAllTypeProduct = async () => {
-    const  res = await ProductService.getAllTypeProduct();
-    if(res?.status === 'OK') {
+    const res = await ProductService.getAllTypeProduct();
+    if (res?.status === "OK") {
       setTypeProducts(res?.data);
     }
-  }
+  };
 
-  const { isPending, data: products, isPlaceholderData, } = useQuery({
-    queryKey: ["products",limit,searchDebounce],
+  const {
+    isPending,
+    data: products,
+    isPlaceholderData,
+  } = useQuery({
+    queryKey: ["products", limit, searchDebounce],
     queryFn: fetchProductAll,
     retry: 3,
     retryDelay: 1000,
     placeholderData: true,
   });
-  
+
   useEffect(() => {
     fetchAllTypeProduct();
-  },[])
+  }, []);
+
+  useLayoutEffect(() => {
+    window.scrollTo({
+      top: yPosition,
+      behavior: "smooth",
+    });
+  });
 
   return (
-    <div style={{ padding: "10px 15vw", backgroundColor: "#F0F0F0" }}>
+    <div
+      style={{
+        padding: "10px 15vw",
+        backgroundColor: "#F0F0F0",
+        paddingBottom: "50px",
+      }}
+    >
       <SliderComponent
         arrImages={[slider1, slider2, slider3, slider4, slider5]}
       />
+      <div style={{ marginTop: "40px" }}>
+        <div
+          style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}
+        >
+          Các sản phẩm
+        </div>
+      </div>
       <Loading isLoading={isPending || loading}>
         <WrapperProducts>
           {products?.data?.map((product) => {
@@ -86,10 +111,16 @@ const HomePage = () => {
               fontSize: "16px",
               fontWeight: "600",
             }}
-            onClick={() => {
+            onClick={(e) => {
+              setYPosition(
+                e.target.getBoundingClientRect().top + window.scrollY
+              );
               setLimit((prev) => prev + 5);
             }}
-            disabled={products?.total === products?.data?.length  || products?.totalPage === 1}
+            disabled={
+              products?.total === products?.data?.length ||
+              products?.totalPage === 1
+            }
           >
             Xem thêm
           </WrapperButtonMore>

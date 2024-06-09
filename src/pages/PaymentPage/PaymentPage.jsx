@@ -15,11 +15,6 @@ import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearOrder,
-  decreaseAmount,
-  increaseAmount,
-  removeAllOrderProduct,
-  removeOrderProduct,
-  selectedOrder,
 } from "../../redux/slices/orderSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { convertPrice } from "../../utils";
@@ -160,7 +155,6 @@ const PaymentPage = () => {
   };
 
   const handleUpdateInfoUser = () => {
-    const { name, address, phone } = stateUserDetails;
     setIsOpenModalUpdateInfo(false);
   };
 
@@ -227,7 +221,7 @@ const PaymentPage = () => {
                       {" "}
                       Thanh toán tiền mặt khi nhận hàng
                     </Radio>
-                    <Radio value="paypal"> Thanh toán tiền bằng paypal</Radio>
+                    {/* <Radio value="paypal"> Thanh toán tiền bằng paypal</Radio> */}
                   </WrapperRadio>
                 </div>
               </WrapperInfo>

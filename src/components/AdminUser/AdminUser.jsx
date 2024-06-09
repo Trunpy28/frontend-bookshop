@@ -1,6 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Form, Input, Select, Space } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  Input,
+  Row,
+  Select,
+  Space,
+  Statistic,
+} from "antd";
 import {
   PlusOutlined,
   EditOutlined,
@@ -19,6 +29,7 @@ import { useQuery } from "@tanstack/react-query";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import { useSelector } from "react-redux";
 import ModalComponent from "../ModalComponent/ModalComponent";
+import CountUp from "react-countup";
 
 const AdminUser = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,6 +42,22 @@ const AdminUser = () => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
+
+  const customnerFormatter = (value) => (
+    <CountUp
+      end={value}
+      separator="."
+      style={{ color: "green", fontWeight: "bold" }}
+    />
+  );
+
+  const adminFormatter = (value) => (
+    <CountUp
+      end={value}
+      separator="."
+      style={{ color: "blue", fontWeight: "bold" }}
+    />
+  );
 
   const [stateUser, setStateUser] = useState({
     name: "",
@@ -530,10 +557,29 @@ const AdminUser = () => {
     );
   };
 
+  //Memo cho thống kê
+  const adminAccount = useMemo(() => {
+    return users?.data?.reduce((total, user) => {
+      return total + (user?.isAdmin ? 1 : 0);
+    }, 0);
+  }, [users]);
+
+  const customerAccount = useMemo(() => {
+    return users?.data?.length - adminAccount;
+  }, [users]);
+
   return (
     <div>
       <WrapperHeader>Quản lý tài khoản</WrapperHeader>
-      <div style={{ marginTop: "10px" }}>
+
+      <div
+        style={{
+          marginTop: "10px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Button
           style={{
             height: "150px",
@@ -545,7 +591,28 @@ const AdminUser = () => {
         >
           <PlusOutlined style={{ fontSize: "40px" }} />
         </Button>
+        <Row gutter={40} style={{ width: "40vw" }}>
+          <Col span={10}>
+            <Card style={{ border: "1px solid #1677FF" }}>
+              <Statistic
+                title="Quản trị viên"
+                value={adminAccount}
+                formatter={adminFormatter}
+              />
+            </Card>
+          </Col>
+          <Col span={10}>
+            <Card style={{ border: "1px solid #00B55F" }}>
+              <Statistic
+                title="Khách hàng"
+                value={customerAccount}
+                formatter={customnerFormatter}
+              />
+            </Card>
+          </Col>
+        </Row>
       </div>
+
       <div style={{ marginTop: "20px" }}>
         <TableComponent
           handleDeleteMany={handleDeleteManyUsers}
@@ -717,7 +784,7 @@ const AdminUser = () => {
                   {
                     value: false,
                     label: "Khách hàng",
-                  }
+                  },
                 ]}
               />
             </Form.Item>
@@ -887,7 +954,7 @@ const AdminUser = () => {
                   {
                     value: false,
                     label: "Khách hàng",
-                  }
+                  },
                 ]}
               />
             </Form.Item>

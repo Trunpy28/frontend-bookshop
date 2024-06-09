@@ -154,7 +154,6 @@ const OrderPage = () => {
   };
 
   const handleUpdateInfoUser = () => {
-    const { name, address, phone } = stateUserDetails;
     setIsOpenModalUpdateInfo(false);
   };
 

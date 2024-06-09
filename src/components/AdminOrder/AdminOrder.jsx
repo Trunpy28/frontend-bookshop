@@ -1,24 +1,33 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Form, Input, Select, Space } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Select,
+  Space,
+  Col,
+  Row,
+  Statistic,
+  Card,
+} from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import TableComponent from "../TableComponent/TableComponent";
-import InputComponent from "../InputComponent/InputComponent";
-import { WrapperUploadFile } from "../../pages/ProfilePage/style";
-import { convertPrice, getBase64, timeTranform } from "../../utils";
+import { convertPrice, timeTranform } from "../../utils";
 import * as OrderService from "../../services/OrderService";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../LoadingComponent/Loading";
 import * as message from "../Message/Message";
-import { isCancelledError, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import { useSelector } from "react-redux";
 import ModalComponent from "../ModalComponent/ModalComponent";
 import { orderConstant } from "../../constant";
+import CountUp from "react-countup";
 
 const AdminOrder = () => {
   const [rowSelected, setRowSelected] = useState("");
@@ -26,6 +35,36 @@ const AdminOrder = () => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
+  const orderQuantityFormatter = (value) => (
+    <CountUp
+      end={value}
+      separator="."
+      style={{ color: "green", fontWeight: "bold" }}
+    />
+  );
+  const totalRevenueFormatter = (value) => (
+    <CountUp
+      end={value}
+      separator="."
+      style={{ color: "#CD3238", fontWeight: "bold" }}
+    />
+  );
+
+  const paidFormatter = (value) => (
+    <CountUp
+      end={value}
+      separator="."
+      style={{ color: "orange", fontWeight: "bold" }}
+    />
+  );
+
+  const deliveredFormatter = (value) => (
+    <CountUp
+      end={value}
+      separator="."
+      style={{ color: "blue", fontWeight: "bold" }}
+    />
+  );
 
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -48,7 +87,10 @@ const AdminOrder = () => {
 
   const mutationUpdate = useMutationHooks(async (data) => {
     const { id, token, isPaid, isDelivery } = data;
-    const res = await OrderService.updateOrder(id, token, { isPaid, isDelivery });
+    const res = await OrderService.updateOrder(id, token, {
+      isPaid,
+      isDelivery,
+    });
     return res;
   });
 
@@ -435,9 +477,73 @@ const AdminOrder = () => {
     );
   };
 
+
+  //Memo cho thống kê
+  const totalRevenue = useMemo(() => {
+    return orders?.data?.reduce((total, order) => {
+      return total + (order?.isPaid ? order?.totalPrice : 0);
+    }, 0);
+  }, [orders]);
+
+  const paidOrderQuantity = useMemo(() => {
+    return orders?.data?.reduce((total, order) => {
+      return total + (order?.isPaid ? 1 : 0);
+    }, 0);
+  }, [orders])
+
+  const deliveredOrderQuantity = useMemo(() => {
+    return orders?.data?.reduce((total, order) => {
+      return total + (order?.isDelivery ? 1 : 0);
+    }, 0);
+  },[orders])
+
   return (
     <div>
       <WrapperHeader>Quản lý đơn hàng</WrapperHeader>
+      <Row gutter={40} style={{ marginTop: "20px", marginBottom: "20px" }}>
+        <Col span={4}>
+          <Card style={{border: '1px solid #00B55F'}}>
+            <Statistic
+              title="Số đơn hàng"
+              value={orders?.data?.length}
+              formatter={orderQuantityFormatter}
+            />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card style={{border: '1px solid red'}}>
+            <Statistic
+              title="Tổng doanh thu"
+              value={totalRevenue}
+              precision={2}
+              formatter={totalRevenueFormatter}
+              suffix={
+                <span style={{ color: "#CD3238", fontWeight: "bold" }}>
+                  VNĐ
+                </span>
+              }
+            />
+          </Card>
+        </Col>
+        <Col span={4}>
+          <Card style={{border: '1px solid #ffbe0c'}}>
+            <Statistic
+              title="Số đơn đã thanh toán"
+              value={paidOrderQuantity}
+              formatter={paidFormatter}
+            />
+          </Card>
+        </Col>
+        <Col span={4}>
+          <Card style={{border: '1px solid #1677FF'}}>
+            <Statistic
+              title="Số đơn đã giao hàng"
+              value={deliveredOrderQuantity}
+              formatter={deliveredFormatter}
+            />
+          </Card>
+        </Col>
+      </Row>
       <div style={{ marginTop: "20px" }}>
         <TableComponent
           handleDeleteMany={handleDeleteManyOrders}
