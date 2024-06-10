@@ -13,12 +13,11 @@ import {
   PlusOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   RatingText,
   StatusInStockText,
   StatusNotInStockText,
-  StatusText,
   WrapperAuthor,
   WrapperButtonAddToCart,
   WrapperOriginalPriceText,
@@ -159,7 +158,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
 
           <LikeButtonComponent
             dataHref={
-              process.env.REACT_APP_IS_LOCAL
+              process.env.REACT_APP_IS_LOCAL === "true"
                 ? "https://developers.facebook.com/docs/plugins/"
                 : window.location.href
             }
@@ -252,7 +251,17 @@ const ProductDetailsComponent = ({ idProduct }) => {
         >
           Thông tin sản phẩm
         </div>
-        <div style={{fontSize: '15px', backgroundColor: "white", padding: '20px 20px', lineHeight: '1.8', whiteSpace: 'pre-line' }}>{productDetails?.description}</div>
+        <div
+          style={{
+            fontSize: "15px",
+            backgroundColor: "white",
+            padding: "20px 20px",
+            lineHeight: "1.8",
+            whiteSpace: "pre-line",
+          }}
+        >
+          {productDetails?.description}
+        </div>
       </div>
 
       <div style={{ marginTop: "40px" }}>
@@ -263,7 +272,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
         </div>
         <CommentComponent
           dataHref={
-            process.env.REACT_APP_IS_LOCAL
+            process.env.REACT_APP_IS_LOCAL === "true"
               ? "https://developers.facebook.com/docs/plugins/comments#configurator"
               : window.location.href
           }
