@@ -21,7 +21,7 @@ import {
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
 import { WrapperUploadFile } from "../../pages/ProfilePage/style";
-import { getBase64, renderOptions } from "../../utils";
+import { convertPrice, getBase64, renderOptions } from "../../utils";
 import * as ProductService from "../../services/ProductService";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../LoadingComponent/Loading";
@@ -319,6 +319,11 @@ const AdminProduct = () => {
       title: "Giá",
       dataIndex: "price",
       sorter: (a, b) => a.price - b.price,
+      render: (text) => (
+        <span style={{ color: "green", fontWeight: "bold" }}>{convertPrice(text)}</span>
+      ),
+      width: 200,
+      align: "center",
       filters: [
         {
           text: ">= 100.000 đ",
@@ -338,6 +343,11 @@ const AdminProduct = () => {
       title: "Giá kuyến mãi",
       dataIndex: "discount",
       sorter: (a, b) => a.discount - b.discount,
+      render: (text) => (
+        <span style={{ color: "#CD3238", fontWeight: "bold" }}>{convertPrice(text)}</span>
+      ),
+      width: 200,
+      align: "center",
       filters: [
         {
           text: ">= 100.000 đ",

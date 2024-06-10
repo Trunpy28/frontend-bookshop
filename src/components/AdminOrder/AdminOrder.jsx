@@ -326,6 +326,8 @@ const AdminOrder = () => {
         <span style={{ color: "#CD3238", fontWeight: "bold" }}>{text}</span>
       ),
       sorter: (a, b) => a.totalPrice.length - b.totalPrice.length,
+      width: 200,
+      align: "center",
     },
     {
       title: "Thời gian đặt hàng",
