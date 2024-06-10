@@ -919,7 +919,7 @@ const AdminProduct = () => {
                 values={stateProduct.description}
                 onChange={handleOnChange}
                 name="description"
-                autoSize
+                style={{height: "200px"}}
               />
             </Form.Item>
 
@@ -1161,7 +1161,7 @@ const AdminProduct = () => {
                 values={stateProductDetails.description}
                 onChange={handleOnChangeDetails}
                 name="description"
-                autoSize
+                style={{height: "200px"}}
               />
             </Form.Item>
 
