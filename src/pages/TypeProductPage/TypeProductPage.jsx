@@ -60,7 +60,6 @@ const TypeProductPage = () => {
     }
   };
 
-
   return (
     <Loading isLoading={loading}>
       <Row style={{ padding: "20px 15vw", backgroundColor: "#F0F0F0" }}>
@@ -108,13 +107,6 @@ const TypeProductPage = () => {
                   return pro;
                 }
               })
-              .slice(
-                (paginate.page - 1) * paginate.limit,
-                Math.max(
-                  sortedProducts.length,
-                  (paginate.page - 1) * paginate.limit + paginate.limit
-                )
-              )
               .map((product) => {
                 return (
                   <CardComponent
@@ -131,22 +123,6 @@ const TypeProductPage = () => {
               })}
           </WrapperProducts>
 
-          <ConfigProvider
-            theme={{
-              token: {
-                /* here is your global tokens */
-                colorPrimary: "#00A651",
-              },
-            }}
-          >
-            <Pagination
-              showSizeChanger
-              onChange={onChange}
-              defaultCurrent={paginate?.page}
-              total={paginate?.total}
-              style={{ textAlign: "right", marginTop: "30px" }}
-            />
-          </ConfigProvider>
         </Col>
       </Row>
     </Loading>
