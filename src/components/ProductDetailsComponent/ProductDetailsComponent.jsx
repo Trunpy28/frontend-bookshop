@@ -156,13 +156,13 @@ const ProductDetailsComponent = ({ idProduct }) => {
             </WrapperStyleTextSale>
           </div>
 
-          <LikeButtonComponent
+          {/* <LikeButtonComponent
             dataHref={
               process.env.REACT_APP_IS_LOCAL === "true"
                 ? "https://developers.facebook.com/docs/plugins/"
                 : window.location.href
             }
-          />
+          /> */}
 
           <WrapperAuthor>
             Tác giả:{" "}
@@ -270,14 +270,14 @@ const ProductDetailsComponent = ({ idProduct }) => {
         >
           NHẬN XÉT
         </div>
-        <CommentComponent
+        {/* <CommentComponent
           dataHref={
             process.env.REACT_APP_IS_LOCAL === "true"
               ? "https://developers.facebook.com/docs/plugins/comments#configurator"
               : window.location.href
           }
           width="100%"
-        />
+        /> */}
       </div>
     </Loading>
   );

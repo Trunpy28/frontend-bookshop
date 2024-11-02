@@ -147,6 +147,7 @@ const SignInPage = () => {
                 alignSelf: "end",
                 marginBottom: "20px"
               }}
+              to={"/account/recovery"}
             >
               Quên mật khẩu?
             </Link>

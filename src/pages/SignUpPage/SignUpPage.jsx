@@ -23,15 +23,17 @@ const SignUpPage = () => {
     data => UserService.signUpUser(data)
   );
 
-  const {data, isPending, isSuccess,isError} = mutation
+  const {data, isPending, isSuccess,isError, error} = mutation
 
   useEffect(() => {
     if (isSuccess && data?.status === 'OK') {
+      console.log(data);
+      
       message.success('Đăng ký thành công');
       navigate('/sign-in');
     }
     else if(isError || data?.status === 'ERR'){
-      message.error('Đăng ký thất bại');
+      message.error('Đăng ký thất bại!. ' + error?.response?.data?.message );
     }
   },[isSuccess,isError])
 

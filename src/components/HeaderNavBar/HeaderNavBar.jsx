@@ -65,6 +65,15 @@ const HeaderNavBar = () => {
           <LinkNavBar to={'/contact'}>
             <Space>LIÊN HỆ</Space>
           </LinkNavBar>
+          <LinkNavBar to={'/'}>
+            <Space>TIN TỨC</Space>
+          </LinkNavBar>
+          <LinkNavBar to={'/'}>
+            <Space>KHUYẾN MẠI</Space>
+          </LinkNavBar>
+          <LinkNavBar to={'/'}>
+            <Space>CHÍNH SÁCH KHÁCH HÀNG</Space>
+          </LinkNavBar>
         </ConfigProvider>
       </TypeProductWrapper>
     </div>

@@ -13,6 +13,9 @@ import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
 import MyOrderPage from "../pages/MyOrder/MyOrderPage";
 import DetailsOrderPage from "../pages/DetailsOrderPage/DetailsOrderPage";
 import ContactPage from "../pages/ContactPage/ContactPage";
+import EmailInput from "../pages/ResetPassword/EmailInput";
+import OTPInput from "../pages/ResetPassword/OTPInput";
+import ResetPassword from "../pages/ResetPassword/ResetPassword";
 
 
 export const routes =  [
@@ -72,6 +75,24 @@ export const routes =  [
     { 
         path: '/sign-up',
         page: SignUpPage,
+        isShowHeader: true,
+        isPrivate: false
+    },
+    { 
+        path: '/account/recovery',
+        page: EmailInput,
+        isShowHeader: true,
+        isPrivate: false
+    },
+    { 
+        path: '/account/recovery/otp/:email',
+        page: OTPInput,
+        isShowHeader: true,
+        isPrivate: false
+    },
+    { 
+        path: '/account/recovery/reset-password',
+        page: ResetPassword,
         isShowHeader: true,
         isPrivate: false
     },

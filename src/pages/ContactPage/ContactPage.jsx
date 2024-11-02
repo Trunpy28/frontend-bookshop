@@ -46,7 +46,7 @@ const ContactPage = () => {
 
   return (
     <div style={containerStyle}>
-      <h1>Liên hệ</h1>
+      <h1 style={{paddingBottom: "10px"}}>Liên hệ</h1>
       <iframe
         src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d1075.852278218103!2d105.84413589485185!3d21.002339701763773!3m2!1i1024!2i768!4f13.1!5e0!3m2!1svi!2s!4v1717945871409!5m2!1svi!2s"
         allowfullscreen=""
