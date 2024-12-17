@@ -439,7 +439,7 @@ const OrderPage = () => {
                 </div>
               </WrapperInfo>
               <WrapperTotal>
-                <span>Tổng tiền</span>
+                <span style={{fontSize: '16px'}}>Tổng tiền</span>
                 <span style={{ display: "flex", flexDirection: "column" }}>
                   <span
                     style={{

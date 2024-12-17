@@ -13,9 +13,7 @@ import {} from "@ant-design/icons";
 
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  clearOrder,
-} from "../../redux/slices/orderSlice";
+import { clearOrder } from "../../redux/slices/orderSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { convertPrice } from "../../utils";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
@@ -24,6 +22,12 @@ import { useMutationHooks } from "../../hooks/useMutationHook";
 import * as OrderService from "../../services/OrderService";
 import Loading from "../../components/LoadingComponent/Loading";
 import { orderConstant } from "../../constant";
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
+import {
+  capturePayPalOrder,
+  createPayPalOrder,
+} from "../../services/PaypalService";
+import { useMutation } from "@tanstack/react-query";
 
 const PaymentPage = () => {
   const order = useSelector((state) => state.order);
@@ -86,7 +90,7 @@ const PaymentPage = () => {
     return Number(priceMemo) + Number(deliveryPriceMemo);
   }, [priceMemo, deliveryPriceMemo]);
 
-  const handleAddOrder = () => {
+  const handleAddOrder = async () => {
     if (
       user?.access_token &&
       order?.orderItemsSelected &&
@@ -96,20 +100,27 @@ const PaymentPage = () => {
       priceMemo &&
       user?.id
     ) {
-      mutationAddOrder.mutate({
-        token: user?.access_token,
-        orderItems: order?.orderItemsSelected,
-        fullName: stateUserDetails?.name,
-        address: stateUserDetails?.address,
-        phone: stateUserDetails?.phone,
-        deliveryMethod: delivery,
-        paymentMethod: payment,
-        itemsPrice: priceMemo,
-        shippingPrice: deliveryPriceMemo,
-        totalPrice: totalPriceMemo,
-        user: user?.id,
-        email: user?.email
-      });
+      try {
+        const result = await mutationAddOrder.mutateAsync({
+          token: user?.access_token,
+          orderItems: order?.orderItemsSelected,
+          fullName: stateUserDetails?.name,
+          address: stateUserDetails?.address,
+          phone: stateUserDetails?.phone,
+          deliveryMethod: delivery,
+          paymentMethod: payment,
+          itemsPrice: priceMemo,
+          shippingPrice: deliveryPriceMemo,
+          totalPrice: totalPriceMemo,
+          user: user?.id,
+          email: user?.email,
+        });
+
+        return result; // Trả về dữ liệu để dùng tiếp trong PayPal
+      } catch (error) {
+        console.error("Error adding order:", error);
+        message.error("Đặt hàng thất bại!");
+      }
     }
   };
 
@@ -123,12 +134,12 @@ const PaymentPage = () => {
   useEffect(() => {
     if (isSuccess && dataAdd?.status === "OK") {
       message.success("Đặt hàng thành công!");
-      const arrayOrdered = []
-      order?.orderItemsSelected?.forEach(element => {
-        arrayOrdered.push(element.product)
+      const arrayOrdered = [];
+      order?.orderItemsSelected?.forEach((element) => {
+        arrayOrdered.push(element.product);
       });
 
-      dispatch(clearOrder({listChecked: arrayOrdered}));
+      dispatch(clearOrder({ listChecked: arrayOrdered }));
       navigate("/order-success", {
         state: {
           delivery,
@@ -137,7 +148,7 @@ const PaymentPage = () => {
           tempPrice: priceMemo,
           shippingPrice: deliveryPriceMemo,
           totalPrice: totalPriceMemo,
-          createdAt: dataAdd?.data?.createdAt
+          createdAt: dataAdd?.data?.createdAt,
         },
       });
     } else if (isError || dataAdd?.status === "ERR") {
@@ -171,6 +182,73 @@ const PaymentPage = () => {
 
   const handlePayment = (e) => {
     setPayment(e.target.value);
+  };
+
+  //Phần xử lý cho paypal
+  const createPayPalOrderMutation = useMutation({
+    mutationFn: (data) => {
+      return createPayPalOrder(data);
+    },
+    onError: () => {
+      message.error("Không thể tạo đơn hàng PayPal, vui lòng thử lại!");
+    },
+  });
+
+  const capturePayPalOrderMutation = useMutation({
+    mutationFn: (data) => {
+      console.log("capture data", data);
+      
+      return capturePayPalOrder(data);
+    },
+    onSuccess: () => {
+      message.success("Thanh toán PayPal thành công!");
+    },
+    onError: () => {
+      message.error("Không thể xác nhận thanh toán PayPal!");
+    },
+  });
+
+  const handleCreatePayPalOrder = async () => {
+    if (
+      user?.access_token &&
+      order?.orderItemsSelected &&
+      user?.name &&
+      user?.address &&
+      user?.phone &&
+      priceMemo &&
+      user?.id
+    ) {
+      const data = await createPayPalOrderMutation.mutateAsync({
+        amount: totalPriceMemo,
+        currency: "USD",
+        accessToken: user?.access_token,
+      });
+
+      console.log("paymentId ", data.id);
+      
+      
+      return data.id;
+    }
+  };
+
+  const handleApprovePayPalOrder = async (data) => {
+    try {
+      const orderData = await handleAddOrder(); // Chờ xử lý đặt hàng xong
+      console.log("approve orderData ", orderData);
+      console.log("approve data ", data);
+      
+      if (orderData?.status === "OK") {
+        await capturePayPalOrderMutation.mutateAsync({
+          paymentId: data.orderID,
+          orderId: orderData.data._id,
+          accessToken: user?.access_token,
+        });
+      } else {
+        message.error("Không thể tạo đơn hàng để thanh toán PayPal!");
+      }
+    } catch (error) {
+      message.error("Thanh toán PayPal thất bại!");
+    }
   };
 
   return (
@@ -221,7 +299,7 @@ const PaymentPage = () => {
                       {" "}
                       Thanh toán tiền mặt khi nhận hàng
                     </Radio>
-                    {/* <Radio value="paypal"> Thanh toán tiền bằng paypal</Radio> */}
+                    <Radio value="paypal"> Thanh toán tiền bằng paypal</Radio>
                   </WrapperRadio>
                 </div>
               </WrapperInfo>
@@ -307,23 +385,40 @@ const PaymentPage = () => {
                   </span>
                 </WrapperTotal>
               </div>
-              <ButtonComponent
-                onClick={() => handleAddOrder()}
-                size={40}
-                styleButton={{
-                  background: "rgb(255, 57, 69)",
-                  height: "48px",
-                  width: "320px",
-                  border: "none",
-                  borderRadius: "4px",
-                }}
-                textbutton="Đặt hàng"
-                styleTextButton={{
-                  color: "#fff",
-                  fontSize: "15px",
-                  fontWeight: "700",
-                }}
-              ></ButtonComponent>
+              {payment === "paypal" ? (
+                <div style={{ width: "320px" }}>
+                  <PayPalScriptProvider
+                    options={{
+                      clientId: process.env.REACT_APP_PAYPAL_CLIENT_ID,
+                      components: "buttons",
+                      currency: "USD",
+                    }}
+                  >
+                    <PayPalButtons
+                      createOrder={handleCreatePayPalOrder}
+                      onApprove={handleApprovePayPalOrder}
+                    />
+                  </PayPalScriptProvider>
+                </div>
+              ) : (
+                <ButtonComponent
+                  onClick={async () => { await handleAddOrder(); }}
+                  size={40}
+                  styleButton={{
+                    background: "rgb(255, 57, 69)",
+                    height: "48px",
+                    width: "320px",
+                    border: "none",
+                    borderRadius: "4px",
+                  }}
+                  textbutton="Đặt hàng"
+                  styleTextButton={{
+                    color: "#fff",
+                    fontSize: "15px",
+                    fontWeight: "700",
+                  }}
+                ></ButtonComponent>
+              )}
             </WrapperRight>
           </div>
         </div>

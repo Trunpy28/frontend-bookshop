@@ -22,16 +22,26 @@ const HomePage = () => {
   const [yPosition, setYPosition] = useState(0);
 
   const fetchProductAll = async (context) => {
-    const search = context?.queryKey && context?.queryKey[2];
-    const limit = context?.queryKey && context?.queryKey[1];
-    const res = await ProductService.getAllProduct(search, limit);
-    return res;
+    try {
+      const search = context?.queryKey && context?.queryKey[2];
+      const limit = context?.queryKey && context?.queryKey[1];
+      const res = await ProductService.getAllProduct(search, limit);
+      return res;
+    }
+    catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchAllTypeProduct = async () => {
-    const res = await ProductService.getAllTypeProduct();
-    if (res?.status === "OK") {
-      setTypeProducts(res?.data);
+    try {
+      const res = await ProductService.getAllTypeProduct();
+      if (res?.status === "OK") {
+        setTypeProducts(res?.data);
+      }
+    }
+    catch (error) {
+      console.log(error);
     }
   };
 
