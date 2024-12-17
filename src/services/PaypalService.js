@@ -1,9 +1,9 @@
 import { axiosJWT } from "./UserService";
 
 // Tạo order PayPal
-export const createPayPalOrder = async ({ amount, currency, accessToken }) => {
+export const createPayPalOrder = async ({ amount, currency, accessToken, userId }) => {
   const response = await axiosJWT.post(
-    `${process.env.REACT_APP_API_URL}/paypal/create-order`,
+    `${process.env.REACT_APP_API_URL}/paypal/create-order/${userId}`,
     {
       amount,
       currency,
@@ -18,9 +18,9 @@ export const createPayPalOrder = async ({ amount, currency, accessToken }) => {
 };
 
 // Xác nhận thanh toán PayPal
-export const capturePayPalOrder = async ({ paymentId, orderId, accessToken }) => {
+export const capturePayPalOrder = async ({ paymentId, orderId, accessToken, userId }) => {
   const response = await axiosJWT.post(
-    `${process.env.REACT_APP_API_URL}/paypal/capture-order/${orderId}`,
+    `${process.env.REACT_APP_API_URL}/paypal/capture-order/user/${userId}/order/${orderId}`,
     { paymentId },
     {
       headers: {

@@ -27,7 +27,7 @@ const TableComponent = (props) => {
       .addSheet("test")
       .addColumns(newColumnExport)
       .addDataSource(dataSource, {
-        str2Percent: true,
+        str2Percent: false,
       })
       .saveAs("Excel.xlsx");
   };

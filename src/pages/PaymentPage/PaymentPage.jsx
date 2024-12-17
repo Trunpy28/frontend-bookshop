@@ -222,6 +222,7 @@ const PaymentPage = () => {
         amount: totalPriceMemo,
         currency: "USD",
         accessToken: user?.access_token,
+        userId: user?.id,
       });
 
       console.log("paymentId ", data.id);
@@ -242,6 +243,7 @@ const PaymentPage = () => {
           paymentId: data.orderID,
           orderId: orderData.data._id,
           accessToken: user?.access_token,
+          userId: user?.id,
         });
       } else {
         message.error("Không thể tạo đơn hàng để thanh toán PayPal!");
